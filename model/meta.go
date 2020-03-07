@@ -6,21 +6,22 @@ import (
 )
 
 type Meta struct {
-	Id       string
-	Title    string
-	Actor    string
-	Producer string
-	Series   string
-	Age      string
-	Sample   string
-	Poster   string
-	Images   []string
-	Label    string
-	Genre    string
+	Id       string   `json:"id"`
+	Title    string   `json:"title"`
+	Actor    string   `json:"actor"`
+	Producer string   `json:"producer,omitempty"`
+	Series   string   `json:"series"`
+	Release  string   `json:"release"`
+	Duration string   `json:"duration"`
+	Sample   string   `json:"sample"`
+	Poster   string   `json:"poster"`
+	Images   []string `json:"images"`
+	Label    string   `json:"label"`
+	Genre    []string `json:"genre"`
 }
 
 func (meta Meta) Json() string {
-	out, err := json.Marshal(meta)
+	out, err := json.MarshalIndent(meta, "", "    ")
 	if err != nil {
 		log.Panic(err)
 	}
