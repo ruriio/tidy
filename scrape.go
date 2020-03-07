@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 	. "tidy/model"
-	. "tidy/sites"
+	. "tidy/selector"
 )
 
 func Scrape(site Site) Meta {

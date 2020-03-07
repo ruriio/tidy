@@ -1,23 +1,11 @@
-package sites
+package selector
 
 import (
 	"github.com/PuerkitoBio/goquery"
 	"strings"
 )
 
-const UserAgent string = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) " +
-	"Chrome/75.0.3770.90 Safari/537.36"
-
-const MobileUserAgent string = "Mozilla/5.0 (iPhone; CPU iPhone OS 10_3_1 like Mac OS X) " +
-	"AppleWebKit/603.1.30 (KHTML, like Gecko) Version/10.0 Mobile/14E304 Safari/602.1"
-
-type Site struct {
-	Url       string
-	UserAgent string
-	Selector
-}
-
-type Selector struct {
+type CssSelector struct {
 	Id       Item
 	Title    Item
 	Actor    Item
@@ -38,16 +26,16 @@ type Item struct {
 	replacer  *strings.Replacer
 }
 
-func selector(selector string) Item {
+func Selector(selector string) Item {
 	return Item{selector: selector, attribute: "", replacer: strings.NewReplacer("", "")}
 }
 
-func (selector Item) replace(oldNew ...string) Item {
+func (selector Item) Replace(oldNew ...string) Item {
 	selector.replacer = strings.NewReplacer(oldNew...)
 	return selector
 }
 
-func (selector Item) attr(attr string) Item {
+func (selector Item) Attribute(attr string) Item {
 	selector.attribute = attr
 	return selector
 }

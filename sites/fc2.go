@@ -2,6 +2,7 @@ package sites
 
 import (
 	"fmt"
+	. "tidy/selector"
 )
 
 func Fc2(id string) Site {
@@ -9,19 +10,19 @@ func Fc2(id string) Site {
 		Url:       fmt.Sprintf("https://adult.contents.fc2.com/article/%s/", id),
 		UserAgent: MobileUserAgent,
 
-		Selector: Selector{
-			Title:    selector(".items_article_MainitemNameTitle"),
-			Actor:    selector(".items_article_seller").replace("by ", ""),
-			Poster:   selector("meta[property^=\"og:image\"]").attr("content"),
-			Producer: selector(".items_article_seller").replace("by ", ""),
-			Sample:   selector(".main-video").attr("src"),
-			Series:   selector(".items_article_seller").replace("by ", ""),
-			Release:  selector(".items_article_Releasedate").replace("販売日 : ", ""),
-			Duration: selector(".items_article_MainitemThumb > p"),
-			Id:       selector(".items_article_TagArea").attr("data-id"),
-			Label:    selector("null"),
-			Genre:    selector("null"),
-			Images:   selector("li[data-img^=\"https://storage\"]").attr("data-img"),
+		CssSelector: CssSelector{
+			Title:    Selector(".items_article_MainitemNameTitle"),
+			Actor:    Selector(".items_article_seller").Replace("by ", ""),
+			Poster:   Selector("meta[property^=\"og:image\"]").Attribute("content"),
+			Producer: Selector(".items_article_seller").Replace("by ", ""),
+			Sample:   Selector(".main-video").Attribute("src"),
+			Series:   Selector(".items_article_seller").Replace("by ", ""),
+			Release:  Selector(".items_article_Releasedate").Replace("販売日 : ", ""),
+			Duration: Selector(".items_article_MainitemThumb > p"),
+			Id:       Selector(".items_article_TagArea").Attribute("data-id"),
+			Label:    Selector("null"),
+			Genre:    Selector("null"),
+			Images:   Selector("li[data-img^=\"https://storage\"]").Attribute("data-img"),
 		},
 	}
 }
