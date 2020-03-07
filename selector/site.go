@@ -41,23 +41,23 @@ func (site Site) Meta() Meta {
 	}
 
 	// extract meta data from web page
-	meta.Title = combine(site.Title.Value(doc), next.Title)
-	meta.Actor = combine(site.Actor.Value(doc), next.Actor)
-	meta.Poster = combine(site.Poster.Value(doc), next.Poster)
-	meta.Producer = combine(site.Producer.Value(doc), next.Producer)
-	meta.Sample = combine(site.Sample.Value(doc), next.Sample)
-	meta.Series = combine(site.Series.Value(doc), next.Series)
-	meta.Release = combine(site.Release.Value(doc), next.Release)
-	meta.Duration = combine(site.Duration.Value(doc), next.Duration)
-	meta.Id = combine(site.Id.Value(doc), next.Id)
-	meta.Label = combine(site.Label.Value(doc), next.Label)
-	meta.Genre = combineArray(site.Genre.Values(doc), next.Genre)
-	meta.Images = combineArray(site.Images.Values(doc), next.Images)
+	meta.Title = oneOf(site.Title.Value(doc), next.Title)
+	meta.Actor = oneOf(site.Actor.Value(doc), next.Actor)
+	meta.Poster = oneOf(site.Poster.Value(doc), next.Poster)
+	meta.Producer = oneOf(site.Producer.Value(doc), next.Producer)
+	meta.Sample = oneOf(site.Sample.Value(doc), next.Sample)
+	meta.Series = oneOf(site.Series.Value(doc), next.Series)
+	meta.Release = oneOf(site.Release.Value(doc), next.Release)
+	meta.Duration = oneOf(site.Duration.Value(doc), next.Duration)
+	meta.Id = oneOf(site.Id.Value(doc), next.Id)
+	meta.Label = oneOf(site.Label.Value(doc), next.Label)
+	meta.Genre = oneOfArray(site.Genre.Values(doc), next.Genre)
+	meta.Images = oneOfArray(site.Images.Values(doc), next.Images)
 	meta.Url = site.Url
 	return meta
 }
 
-func combine(first string, second string) string {
+func oneOf(first string, second string) string {
 	if len(first) > 0 {
 		return first
 	} else {
@@ -65,7 +65,7 @@ func combine(first string, second string) string {
 	}
 }
 
-func combineArray(first []string, second []string) []string {
+func oneOfArray(first []string, second []string) []string {
 	if len(first) > 0 {
 		return first
 	} else {
