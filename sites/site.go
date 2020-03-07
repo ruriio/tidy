@@ -33,16 +33,23 @@ type Selector struct {
 }
 
 type Item struct {
-	selector string
-	replacer *strings.Replacer
+	selector  string
+	attribute string
+	replacer  *strings.Replacer
 }
 
 func selector(selector string) Item {
-	return Item{selector: selector, replacer: strings.NewReplacer("", "")}
+	return Item{selector: selector, attribute: "", replacer: strings.NewReplacer("", "")}
 }
 
-func replacer(selector string, replacer *strings.Replacer) Item {
-	return Item{selector: selector, replacer: replacer}
+func (selector Item) replace(oldNew ...string) Item {
+	selector.replacer = strings.NewReplacer(oldNew...)
+	return selector
+}
+
+func (selector Item) attr(attr string) Item {
+	selector.attribute = attr
+	return selector
 }
 
 func (selector Item) Text(doc *goquery.Document) string {
@@ -61,6 +68,33 @@ func (selector Item) Texts(doc *goquery.Document) []string {
 	return texts
 }
 
+func (selector Item) Value(doc *goquery.Document) string {
+	selection := doc.Find(selector.selector).First()
+	return selector.textOrAttr(selection)
+}
+
+func (selector Item) Values(doc *goquery.Document) []string {
+	var texts []string
+	doc.Find(selector.selector).Each(func(i int, selection *goquery.Selection) {
+		texts = append(texts, selector.textOrAttr(selection))
+	})
+
+	return texts
+}
+
+func (selector Item) textOrAttr(selection *goquery.Selection) string {
+	text := ""
+	if len(selector.attribute) > 0 {
+		src, exist := selection.Attr(selector.attribute)
+		if exist {
+			text = src
+		}
+	} else {
+		text = selection.Text()
+	}
+	return selector.replacer.Replace(strings.TrimSpace(text))
+}
+
 func (selector Item) Image(doc *goquery.Document) string {
 	return selector.Attr(doc, "src")
 }
@@ -71,6 +105,10 @@ func (selector Item) Images(doc *goquery.Document) []string {
 
 func (selector Item) Link(doc *goquery.Document) string {
 	return selector.Attr(doc, "href")
+}
+
+func (selector Item) Links(doc *goquery.Document) []string {
+	return selector.Attrs(doc, "href")
 }
 
 func (selector Item) Attr(doc *goquery.Document, attr string) string {

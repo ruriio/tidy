@@ -18,6 +18,7 @@ type Meta struct {
 	Images   []string `json:"images"`
 	Label    string   `json:"label"`
 	Genre    []string `json:"genre"`
+	Url      string   `json:"url"`
 }
 
 func (meta Meta) Json() string {

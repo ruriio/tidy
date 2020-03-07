@@ -30,18 +30,19 @@ func Scrape(site Site) Meta {
 	}
 
 	// extract meta data from web page
-	meta.Title = site.Title.Text(doc)
-	meta.Actor = site.Actor.Text(doc)
-	meta.Poster = site.Poster.Image(doc)
-	meta.Producer = site.Producer.Text(doc)
-	meta.Sample = site.Sample.Link(doc)
-	meta.Series = site.Series.Text(doc)
-	meta.Release = site.Release.Text(doc)
-	meta.Duration = site.Duration.Text(doc)
-	meta.Id = site.Id.Text(doc)
-	meta.Label = site.Label.Text(doc)
-	meta.Genre = site.Genre.Texts(doc)
-	meta.Images = site.Images.Images(doc)
+	meta.Title = site.Title.Value(doc)
+	meta.Actor = site.Actor.Value(doc)
+	meta.Poster = site.Poster.Value(doc)
+	meta.Producer = site.Producer.Value(doc)
+	meta.Sample = site.Sample.Value(doc)
+	meta.Series = site.Series.Value(doc)
+	meta.Release = site.Release.Value(doc)
+	meta.Duration = site.Duration.Value(doc)
+	meta.Id = site.Id.Value(doc)
+	meta.Label = site.Label.Value(doc)
+	meta.Genre = site.Genre.Values(doc)
+	meta.Images = site.Images.Values(doc)
+	meta.Url = site.Url
 
 	return meta
 }
