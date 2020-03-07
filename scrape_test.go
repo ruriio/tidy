@@ -9,7 +9,8 @@ import (
 func TestScrape(t *testing.T) {
 	//meta := Scrape(sites.Dmm("ssni678"))
 	//meta := Scrape(sites.Fc2("1294320"))
-	meta := Scrape(sites.Fc2Club("437689"))
+	//meta := Scrape(sites.Fc2Club("437689"))
+	meta := Scrape(sites.Carib("030720-001"))
 
 	fmt.Println(meta.Json())
 }

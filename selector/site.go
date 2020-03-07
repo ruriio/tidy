@@ -9,5 +9,6 @@ const MobileUserAgent string = "Mozilla/5.0 (iPhone; CPU iPhone OS 10_3_1 like M
 type Site struct {
 	Url       string
 	UserAgent string
+	Charset   string
 	CssSelector
 }

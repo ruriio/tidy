@@ -24,10 +24,15 @@ type Item struct {
 	selector  string
 	attribute string
 	replacer  *strings.Replacer
+	preset    string
 }
 
 func Selector(selector string) Item {
-	return Item{selector: selector, attribute: "", replacer: strings.NewReplacer("", "")}
+	return Item{selector: selector, attribute: "", replacer: strings.NewReplacer("", ""), preset: ""}
+}
+
+func Preset(preset string) Item {
+	return Item{selector: "", attribute: "", replacer: strings.NewReplacer("", ""), preset: preset}
 }
 
 func (selector Item) Replace(oldNew ...string) Item {
@@ -57,6 +62,9 @@ func (selector Item) Texts(doc *goquery.Document) []string {
 }
 
 func (selector Item) Value(doc *goquery.Document) string {
+	if len(selector.preset) > 0 {
+		return selector.preset
+	}
 	selection := doc.Find(selector.selector).First()
 	return selector.textOrAttr(selection)
 }
