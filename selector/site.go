@@ -23,6 +23,7 @@ type Site struct {
 	Charset   string
 	Cookies   []http.Cookie
 	CssSelector
+	Next *Site
 }
 
 func (site Site) Meta() Meta {
@@ -34,21 +35,42 @@ func (site Site) Meta() Meta {
 		log.Fatal(err)
 	}
 
+	var next = Meta{}
+	if site.Next != nil {
+		next = site.Next.Meta()
+	}
+
 	// extract meta data from web page
-	meta.Title = site.Title.Value(doc)
-	meta.Actor = site.Actor.Value(doc)
-	meta.Poster = site.Poster.Value(doc)
-	meta.Producer = site.Producer.Value(doc)
-	meta.Sample = site.Sample.Value(doc)
-	meta.Series = site.Series.Value(doc)
-	meta.Release = site.Release.Value(doc)
-	meta.Duration = site.Duration.Value(doc)
-	meta.Id = site.Id.Value(doc)
-	meta.Label = site.Label.Value(doc)
-	meta.Genre = site.Genre.Values(doc)
-	meta.Images = site.Images.Values(doc)
+	meta.Title = combine(site.Title.Value(doc), next.Title)
+	meta.Actor = combine(site.Actor.Value(doc), next.Actor)
+	meta.Poster = combine(site.Poster.Value(doc), next.Poster)
+	meta.Producer = combine(site.Producer.Value(doc), next.Producer)
+	meta.Sample = combine(site.Sample.Value(doc), next.Sample)
+	meta.Series = combine(site.Series.Value(doc), next.Series)
+	meta.Release = combine(site.Release.Value(doc), next.Release)
+	meta.Duration = combine(site.Duration.Value(doc), next.Duration)
+	meta.Id = combine(site.Id.Value(doc), next.Id)
+	meta.Label = combine(site.Label.Value(doc), next.Label)
+	meta.Genre = combineArray(site.Genre.Values(doc), next.Genre)
+	meta.Images = combineArray(site.Images.Values(doc), next.Images)
 	meta.Url = site.Url
 	return meta
+}
+
+func combine(first string, second string) string {
+	if len(first) > 0 {
+		return first
+	} else {
+		return second
+	}
+}
+
+func combineArray(first []string, second []string) []string {
+	if len(first) > 0 {
+		return first
+	} else {
+		return second
+	}
 }
 
 func (site Site) Body() io.ReadCloser {
@@ -86,7 +108,6 @@ func (site Site) get() (*http.Response, error) {
 	req.Header.Set("User-Agent", site.UserAgent)
 
 	for _, cookie := range site.Cookies {
-		log.Println(cookie)
 		req.AddCookie(&cookie)
 	}
 

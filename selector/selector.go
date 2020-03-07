@@ -6,18 +6,18 @@ import (
 )
 
 type CssSelector struct {
-	Id       Item
-	Title    Item
-	Actor    Item
-	Poster   Item
-	Series   Item
-	Producer Item
-	Release  Item
-	Duration Item
-	Sample   Item
-	Images   Item
-	Label    Item
-	Genre    Item
+	Id       *Item
+	Title    *Item
+	Actor    *Item
+	Poster   *Item
+	Series   *Item
+	Producer *Item
+	Release  *Item
+	Duration *Item
+	Sample   *Item
+	Images   *Item
+	Label    *Item
+	Genre    *Item
 }
 
 type Item struct {
@@ -27,22 +27,22 @@ type Item struct {
 	preset    string
 }
 
-func Selector(selector string) Item {
-	return Item{selector: selector, attribute: "", replacer: strings.NewReplacer("", ""), preset: ""}
+func Selector(selector string) *Item {
+	return &Item{selector: selector, attribute: "", replacer: strings.NewReplacer("", ""), preset: ""}
 }
 
-func Preset(preset string) Item {
-	return Item{selector: "", attribute: "", replacer: strings.NewReplacer("", ""), preset: preset}
+func Preset(preset string) *Item {
+	return &Item{selector: "", attribute: "", replacer: strings.NewReplacer("", ""), preset: preset}
 }
 
-func (selector Item) Replace(oldNew ...string) Item {
+func (selector Item) Replace(oldNew ...string) *Item {
 	selector.replacer = strings.NewReplacer(oldNew...)
-	return selector
+	return &selector
 }
 
-func (selector Item) Attribute(attr string) Item {
+func (selector Item) Attribute(attr string) *Item {
 	selector.attribute = attr
-	return selector
+	return &selector
 }
 
 func (selector Item) Text(doc *goquery.Document) string {
@@ -61,7 +61,12 @@ func (selector Item) Texts(doc *goquery.Document) []string {
 	return texts
 }
 
-func (selector Item) Value(doc *goquery.Document) string {
+func (selector *Item) Value(doc *goquery.Document) string {
+
+	if selector == nil {
+		return ""
+	}
+
 	if len(selector.preset) > 0 {
 		return selector.preset
 	}
@@ -69,8 +74,13 @@ func (selector Item) Value(doc *goquery.Document) string {
 	return selector.textOrAttr(selection)
 }
 
-func (selector Item) Values(doc *goquery.Document) []string {
+func (selector *Item) Values(doc *goquery.Document) []string {
 	var texts []string
+
+	if selector == nil {
+		return texts
+	}
+
 	doc.Find(selector.selector).Each(func(i int, selection *goquery.Selection) {
 		texts = append(texts, selector.textOrAttr(selection))
 	})

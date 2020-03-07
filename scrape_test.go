@@ -12,7 +12,7 @@ func TestScrape(t *testing.T) {
 	//meta := Scrape(sites.Fc2Club("437689"))
 	//meta := Scrape(sites.Carib("030720-001"))
 	//meta := Scrape(sites.CaribPr("022820_003"))
-	meta := Scrape(sites.Mgs("261ARA-418"))
+	meta := Scrape(sites.Mgs("300MIUM-544"))
 
 	fmt.Println(meta.Json())
 }
