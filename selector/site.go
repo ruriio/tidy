@@ -33,10 +33,6 @@ type Site struct {
 	Selector
 }
 
-type Decor interface {
-	Decorate(meta *Meta) *Meta
-}
-
 func (site Site) Decorate(meta *Meta) *Meta {
 	return &site.meta
 }
@@ -145,22 +141,6 @@ func (site Site) parseHtml() Meta {
 	return meta
 }
 
-func oneOf(first string, second string) string {
-	if len(first) > 0 {
-		return first
-	} else {
-		return second
-	}
-}
-
-func oneOfArray(first []string, second []string) []string {
-	if len(first) > 0 {
-		return first
-	} else {
-		return second
-	}
-}
-
 func (site Site) Body() io.ReadCloser {
 	resp, err := site.get()
 
@@ -201,6 +181,22 @@ func (site Site) get() (*http.Response, error) {
 	}
 
 	return client.Do(req)
+}
+
+func oneOf(first string, second string) string {
+	if len(first) > 0 {
+		return first
+	} else {
+		return second
+	}
+}
+
+func oneOfArray(first []string, second []string) []string {
+	if len(first) > 0 {
+		return first
+	} else {
+		return second
+	}
 }
 
 func decodeHTMLBody(body io.Reader, encoding string) (io.ReadCloser, error) {
