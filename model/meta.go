@@ -1,8 +1,8 @@
 package model
 
 import (
-	"encoding/json"
 	"log"
+	"tidy/util"
 )
 
 type Meta struct {
@@ -23,7 +23,7 @@ type Meta struct {
 }
 
 func (meta Meta) Json() string {
-	out, err := json.MarshalIndent(meta, "", "    ")
+	out, err := util.JSONMarshal(meta)
 	if err != nil {
 		log.Panic(err)
 	}

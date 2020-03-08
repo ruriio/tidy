@@ -2,6 +2,7 @@ package selector
 
 import (
 	"github.com/PuerkitoBio/goquery"
+	"regexp"
 	"strings"
 )
 
@@ -26,6 +27,7 @@ type Item struct {
 	attribute string
 	replacer  *strings.Replacer
 	preset    string
+	matcher   string
 }
 
 func Selector(selector string) *Item {
@@ -43,6 +45,11 @@ func (selector Item) Replace(oldNew ...string) *Item {
 
 func (selector Item) Attribute(attr string) *Item {
 	selector.attribute = attr
+	return &selector
+}
+
+func (selector Item) Match(matcher string) *Item {
+	selector.matcher = matcher
 	return &selector
 }
 
@@ -71,8 +78,24 @@ func (selector *Item) Value(doc *goquery.Document) string {
 	if len(selector.preset) > 0 {
 		return selector.preset
 	}
+
+	if len(selector.matcher) > 0 {
+		return selector.matcherValue(doc)
+	}
+
 	selection := doc.Find(selector.selector).First()
 	return selector.textOrAttr(selection)
+}
+
+func (selector Item) matcherValue(doc *goquery.Document) string {
+	re := regexp.MustCompile(selector.matcher)
+	text := doc.Text()
+
+	matches := re.FindAllString(text, -1)
+	if len(matches) > 0 {
+		return matches[0]
+	}
+	return ""
 }
 
 func (selector *Item) Values(doc *goquery.Document) []string {
