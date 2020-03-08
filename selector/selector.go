@@ -1,8 +1,10 @@
 package selector
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
+	"log"
 	"reflect"
 	"regexp"
 	"strings"
@@ -217,7 +219,17 @@ func queries(data map[string]interface{}, key string) []string {
 		if reflect.ValueOf(x).Kind() == reflect.Slice {
 			array := x.([]interface{})
 			for _, v := range array {
-				value := fmt.Sprintf("%v", v)
+				var value string
+
+				if reflect.ValueOf(v).Kind() == reflect.Map {
+					out, err := json.Marshal(v)
+					if err != nil {
+						log.Fatal(err)
+					}
+					value = string(out)
+				} else {
+					value = fmt.Sprintf("%v", v)
+				}
 				res = append(res, value)
 			}
 		}

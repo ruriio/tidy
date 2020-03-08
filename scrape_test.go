@@ -17,7 +17,7 @@ func TestScrape(t *testing.T) {
 	//meta := Scrape(sites.Fantia("8209"))
 	//meta := Scrape(sites.Getchu("19622"))
 	//meta := Scrape(sites.Tokyo("n1236"))
-	meta := Scrape(sites.Pondo("020820_971"))
+	meta := Scrape(sites.Pondo("052416_304"))
 
 	fmt.Println(meta.Json())
 }

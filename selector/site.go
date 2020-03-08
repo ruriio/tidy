@@ -26,24 +26,39 @@ type Site struct {
 	Cookies   []http.Cookie
 	Json      bool
 	JsonData  interface{}
+	Next      *Site
+	Decor     Decor
+	meta      Meta
+
 	Selector
-	Next *Site
+}
+
+type Decor interface {
+	Decorate(meta *Meta) *Meta
+}
+
+func (site Site) Decorate(meta *Meta) *Meta {
+	return &site.meta
 }
 
 func (site Site) Meta() Meta {
-	var meta = Meta{}
+	site.meta = Meta{}
 	if site.Json {
-		meta = site.parseJson()
+		site.meta = site.parseJson()
 	} else {
-		meta = site.parseHtml()
+		site.meta = site.parseHtml()
 	}
 
 	if len(site.WebUrl) > 0 {
-		meta.Url = site.WebUrl
+		site.meta.Url = site.WebUrl
 	} else {
-		meta.Url = site.Url
+		site.meta.Url = site.Url
 	}
-	return meta
+	if site.Decor != nil {
+		return *site.Decor.Decorate(&site.meta)
+	} else {
+		return site.meta
+	}
 }
 
 func (site Site) parseJson() Meta {
@@ -51,7 +66,7 @@ func (site Site) parseJson() Meta {
 	body, err := ioutil.ReadAll(site.Body())
 	err = json.Unmarshal(body, &site.JsonData)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 
 	data := make(map[string]interface{})
@@ -150,12 +165,12 @@ func (site Site) Body() io.ReadCloser {
 	resp, err := site.get()
 
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	//defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		log.Fatalf("stats code error: %d %s", resp.StatusCode, resp.Status)
+		log.Printf("stats code error: %d %s\n", resp.StatusCode, resp.Status)
 	}
 
 	body := resp.Body
@@ -166,17 +181,18 @@ func (site Site) Body() io.ReadCloser {
 	if site.Charset != "" {
 		body, err = decodeHTMLBody(resp.Body, site.Charset)
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
 		}
 	}
 	return body
 }
 
 func (site Site) get() (*http.Response, error) {
+	log.Printf("url: %s", site.Url)
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", site.Url, nil)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	req.Header.Set("User-Agent", site.UserAgent)
 
