@@ -35,7 +35,11 @@ func Selector(selector string) *Item {
 }
 
 func Preset(preset string) *Item {
-	return &Item{selector: "", attribute: "", replacer: strings.NewReplacer("", ""), preset: preset}
+	return &Item{preset: preset}
+}
+
+func Matcher(matcher string) *Item {
+	return &Item{matcher: matcher}
 }
 
 func (selector Item) Replace(oldNew ...string) *Item {
@@ -45,11 +49,6 @@ func (selector Item) Replace(oldNew ...string) *Item {
 
 func (selector Item) Attribute(attr string) *Item {
 	selector.attribute = attr
-	return &selector
-}
-
-func (selector Item) Match(matcher string) *Item {
-	selector.matcher = matcher
 	return &selector
 }
 
