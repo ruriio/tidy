@@ -13,19 +13,19 @@ func Getchu(id string) Site {
 		Cookies:   []http.Cookie{{Name: "adult_check_flag", Value: "1"}},
 		Charset:   "euc-jp",
 
-		CssSelector: CssSelector{
-			Title:    Selector("meta[property=\"og:title\"]").Attribute("content"),
-			Actor:    Selector("a[href^=\"http://dl.getchu.com/search/dojin_circle_detail.php\"]"),
-			Poster:   Selector("meta[property=\"og:image\"]").Attribute("content"),
-			Producer: Selector("a[href^=\"http://dl.getchu.com/search/dojin_circle_detail.php\"]"),
-			Sample:   Selector("a[href^=\"http://file.dl.getchu.com/download_sample_file.php\"]").Attribute("href"),
-			Series:   Selector("a[href^=\"http://dl.getchu.com/search/dojin_circle_detail.php\"]"),
-			Release:  Matcher(`\d{4}/\d{2}/\d{2}`),
-			Duration: Matcher(`動画.*分`),
-			Id:       Selector("input[name=id]").Attribute("value"),
-			Label:    Selector("null"),
-			Genre:    Selector(".item-key > a"),
-			Images:   Selector("a[href^=\"/data/item_img\"]").Attribute("href").Replace("/data", "http://dl.getchu.com/data"),
+		Selector: Selector{
+			Title:    Select("meta[property=\"og:title\"]").Attribute("content"),
+			Actor:    Select("a[href^=\"http://dl.getchu.com/search/dojin_circle_detail.php\"]"),
+			Poster:   Select("meta[property=\"og:image\"]").Attribute("content"),
+			Producer: Select("a[href^=\"http://dl.getchu.com/search/dojin_circle_detail.php\"]"),
+			Sample:   Select("a[href^=\"http://file.dl.getchu.com/download_sample_file.php\"]").Attribute("href"),
+			Series:   Select("a[href^=\"http://dl.getchu.com/search/dojin_circle_detail.php\"]"),
+			Release:  Match(`\d{4}/\d{2}/\d{2}`),
+			Duration: Match(`動画.*分`),
+			Id:       Select("input[name=id]").Attribute("value"),
+			Label:    Select("null"),
+			Genre:    Select(".item-key > a"),
+			Images:   Select("a[href^=\"/data/item_img\"]").Attribute("href").Replace("/data", "http://dl.getchu.com/data"),
 		},
 	}
 }

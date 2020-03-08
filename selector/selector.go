@@ -1,12 +1,14 @@
 package selector
 
 import (
+	"fmt"
 	"github.com/PuerkitoBio/goquery"
+	"reflect"
 	"regexp"
 	"strings"
 )
 
-type CssSelector struct {
+type Selector struct {
 	Id       *Item
 	Title    *Item
 	Actor    *Item
@@ -27,10 +29,12 @@ type Item struct {
 	attribute string
 	replacer  *strings.Replacer
 	preset    string
+	presets   []string
 	matcher   string
+	query     string
 }
 
-func Selector(selector string) *Item {
+func Select(selector string) *Item {
 	return &Item{selector: selector, attribute: "", replacer: strings.NewReplacer("", ""), preset: ""}
 }
 
@@ -38,8 +42,16 @@ func Preset(preset string) *Item {
 	return &Item{preset: preset}
 }
 
-func Matcher(matcher string) *Item {
+func Presets(presets []string) *Item {
+	return &Item{presets: presets}
+}
+
+func Match(matcher string) *Item {
 	return &Item{matcher: matcher}
+}
+
+func Query(query string) *Item {
+	return &Item{query: query}
 }
 
 func (selector Item) Replace(oldNew ...string) *Item {
@@ -104,6 +116,10 @@ func (selector *Item) Values(doc *goquery.Document) []string {
 		return texts
 	}
 
+	if selector.presets != nil {
+		return selector.presets
+	}
+
 	doc.Find(selector.selector).Each(func(i int, selection *goquery.Selection) {
 		texts = append(texts, selector.textOrAttr(selection))
 	})
@@ -160,7 +176,56 @@ func (selector Item) Attrs(doc *goquery.Document, attr string) []string {
 	})
 	return attrs
 }
-func (selectors CssSelector) AddExtra(key string, selector *Item) CssSelector {
+
+func (selector *Item) Query(data map[string]interface{}) string {
+	if selector == nil {
+		return ""
+	}
+	if len(selector.preset) > 0 {
+		return selector.preset
+	}
+	return query(data, selector.query)
+}
+
+func query(data map[string]interface{}, key string) string {
+	value := data[key]
+
+	if value != nil {
+		return fmt.Sprintf("%v", value)
+	}
+	return ""
+}
+
+func (selector *Item) Queries(data map[string]interface{}) []string {
+
+	if selector == nil {
+		return []string{}
+	}
+
+	if selector.presets != nil {
+		return selector.presets
+	}
+
+	return queries(data, selector.query)
+}
+
+func queries(data map[string]interface{}, key string) []string {
+	var res []string
+	x := data[key]
+	if x != nil {
+		// if json object is not slice then ignore
+		if reflect.ValueOf(x).Kind() == reflect.Slice {
+			array := x.([]interface{})
+			for _, v := range array {
+				value := fmt.Sprintf("%v", v)
+				res = append(res, value)
+			}
+		}
+	}
+	return res
+}
+
+func (selectors Selector) AddExtra(key string, selector *Item) Selector {
 	if selectors.Extras == nil {
 		selectors.Extras = make(map[string]*Item)
 	}

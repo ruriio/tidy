@@ -2,6 +2,7 @@ package selector
 
 import (
 	"bufio"
+	"encoding/json"
 	"github.com/PuerkitoBio/goquery"
 	"golang.org/x/net/html/charset"
 	"io"
@@ -19,14 +20,72 @@ const MobileUserAgent string = "Mozilla/5.0 (iPhone; CPU iPhone OS 10_3_1 like M
 
 type Site struct {
 	Url       string
+	WebUrl    string
 	UserAgent string
 	Charset   string
 	Cookies   []http.Cookie
-	CssSelector
+	Json      bool
+	JsonData  interface{}
+	Selector
 	Next *Site
 }
 
 func (site Site) Meta() Meta {
+	var meta = Meta{}
+	if site.Json {
+		meta = site.parseJson()
+	} else {
+		meta = site.parseHtml()
+	}
+
+	if len(site.WebUrl) > 0 {
+		meta.Url = site.WebUrl
+	} else {
+		meta.Url = site.Url
+	}
+	return meta
+}
+
+func (site Site) parseJson() Meta {
+	var meta = Meta{}
+	body, err := ioutil.ReadAll(site.Body())
+	err = json.Unmarshal(body, &site.JsonData)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	data := make(map[string]interface{})
+	m, ok := site.JsonData.(map[string]interface{})
+	if ok {
+		for k, v := range m {
+			//fmt.Println(k, "=>", v)
+			data[k] = v
+		}
+	}
+
+	next := Meta{}
+	if site.Next != nil {
+		next = site.Next.Meta()
+	}
+
+	// extract meta data from json data
+	meta.Title = oneOf(site.Title.Query(data), next.Title)
+	meta.Actor = oneOf(site.Actor.Query(data), next.Actor)
+	meta.Poster = oneOf(site.Poster.Query(data), next.Poster)
+	meta.Producer = oneOf(site.Producer.Query(data), next.Producer)
+	meta.Sample = oneOf(site.Sample.Query(data), next.Sample)
+	meta.Series = oneOf(site.Series.Query(data), next.Series)
+	meta.Release = oneOf(site.Release.Query(data), next.Release)
+	meta.Duration = oneOf(site.Duration.Query(data), next.Duration)
+	meta.Id = oneOf(site.Id.Query(data), next.Id)
+	meta.Label = oneOf(site.Label.Query(data), next.Label)
+	meta.Genre = oneOfArray(site.Genre.Queries(data), next.Genre)
+	meta.Images = oneOfArray(site.Images.Queries(data), next.Images)
+
+	return meta
+}
+
+func (site Site) parseHtml() Meta {
 	var meta = Meta{}
 	// load the HTML document
 	doc, err := goquery.NewDocumentFromReader(site.Body())
@@ -53,7 +112,6 @@ func (site Site) Meta() Meta {
 	meta.Label = oneOf(site.Label.Value(doc), next.Label)
 	meta.Genre = oneOfArray(site.Genre.Values(doc), next.Genre)
 	meta.Images = oneOfArray(site.Images.Values(doc), next.Images)
-	meta.Url = site.Url
 
 	// extract extras to meta
 	if site.Extras != nil {

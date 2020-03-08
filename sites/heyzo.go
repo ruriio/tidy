@@ -12,19 +12,19 @@ func Heyzo(id string) Site {
 		Url:       fmt.Sprintf("http://m.heyzo.com/moviepages/%s/index.html", id),
 		UserAgent: MobileUserAgent,
 
-		CssSelector: CssSelector{
-			Title:    Selector("h1"),
-			Actor:    Selector("strong.name"),
-			Poster:   Selector("#gallery > div > a > img").Attribute("src").Replace("gallery/thumbnail_001.jpg", "images/player_thumbnail.jpg"),
+		Selector: Selector{
+			Title:    Select("h1"),
+			Actor:    Select("strong.name"),
+			Poster:   Select("#gallery > div > a > img").Attribute("src").Replace("gallery/thumbnail_001.jpg", "images/player_thumbnail.jpg"),
 			Producer: Preset("HEYZO"),
-			Sample:   Selector("#gallery > div > a > img").Attribute("src").Replace("gallery/thumbnail_001.jpg", "sample.mp4"),
-			Series:   Selector("#series").Replace("シリーズ：", ""),
-			Release:  Selector("span.release").Replace("配信日：", ""),
-			Duration: Selector("span[itemprop=duration]"),
-			Id:       Selector("input[name=movie_id]").Attribute("value"),
-			Label:    Selector("null"),
-			Genre:    Selector("#keyword > ul > ul > li > a"),
-			Images:   Selector("#gallery > div > a > img").Attribute("src").Replace("thumbnail_", ""),
-		}.AddExtra(providerId, Selector("input[name=provider_id]").Attribute("value")),
+			Sample:   Select("#gallery > div > a > img").Attribute("src").Replace("gallery/thumbnail_001.jpg", "sample.mp4"),
+			Series:   Select("#series").Replace("シリーズ：", ""),
+			Release:  Select("span.release").Replace("配信日：", ""),
+			Duration: Select("span[itemprop=duration]"),
+			Id:       Select("input[name=movie_id]").Attribute("value"),
+			Label:    Select("null"),
+			Genre:    Select("#keyword > ul > ul > li > a"),
+			Images:   Select("#gallery > div > a > img").Attribute("src").Replace("thumbnail_", ""),
+		}.AddExtra(providerId, Select("input[name=provider_id]").Attribute("value")),
 	}
 }

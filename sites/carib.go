@@ -11,19 +11,19 @@ func Carib(id string) Site {
 		UserAgent: MobileUserAgent,
 		Charset:   "euc-jp",
 
-		CssSelector: CssSelector{
-			Title:    Selector("h1[itemprop=name]"),
-			Actor:    Selector("a[itemprop=actor]"),
+		Selector: Selector{
+			Title:    Select("h1[itemprop=name]"),
+			Actor:    Select("a[itemprop=actor]"),
 			Poster:   Preset(fmt.Sprintf("https://www.caribbeancom.com/moviepages/%s/images/l_l.jpg", id)),
 			Producer: Preset("Caribbean"),
 			Sample:   Preset(fmt.Sprintf("https://smovie.caribbeancom.com/sample/movies/%s/480p.mp4", id)),
-			Series:   Selector("a[onclick^=gaDetailEvent\\(\\'Series\\ Name\\']"),
-			Release:  Selector("span[itemprop=datePublished]"),
-			Duration: Selector("span[itemprop=duration]"),
+			Series:   Select("a[onclick^=gaDetailEvent\\(\\'Series\\ Name\\']"),
+			Release:  Select("span[itemprop=datePublished]"),
+			Duration: Select("span[itemprop=duration]"),
 			Id:       Preset(id),
-			Label:    Selector("null"),
-			Genre:    Selector("a[itemprop=genre]"),
-			Images:   Selector("a[data-is_sample='1']").Attribute("href").Replace("/movie", "https://www.caribbeancom.com/movie"),
+			Label:    Select("null"),
+			Genre:    Select("a[itemprop=genre]"),
+			Images:   Select("a[data-is_sample='1']").Attribute("href").Replace("/movie", "https://www.caribbeancom.com/movie"),
 		},
 	}
 }
