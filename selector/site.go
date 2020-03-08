@@ -54,6 +54,21 @@ func (site Site) Meta() Meta {
 	meta.Genre = oneOfArray(site.Genre.Values(doc), next.Genre)
 	meta.Images = oneOfArray(site.Images.Values(doc), next.Images)
 	meta.Url = site.Url
+
+	// extract extras to meta
+	if site.Extras != nil {
+		meta.Extras = make(map[string]string)
+		for key, value := range site.Extras {
+			meta.Extras[key] = value.Value(doc)
+		}
+
+		for key, value := range next.Extras {
+			meta.Extras[key] = value
+		}
+	} else {
+		meta.Extras = next.Extras
+	}
+
 	return meta
 }
 

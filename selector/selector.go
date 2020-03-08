@@ -18,6 +18,7 @@ type CssSelector struct {
 	Images   *Item
 	Label    *Item
 	Genre    *Item
+	Extras   map[string]*Item
 }
 
 type Item struct {
@@ -136,4 +137,11 @@ func (selector Item) Attrs(doc *goquery.Document, attr string) []string {
 		}
 	})
 	return attrs
+}
+func (selectors CssSelector) AddExtra(key string, selector *Item) CssSelector {
+	if selectors.Extras == nil {
+		selectors.Extras = make(map[string]*Item)
+	}
+	selectors.Extras[key] = selector
+	return selectors
 }

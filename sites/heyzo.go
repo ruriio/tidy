@@ -6,6 +6,8 @@ import (
 )
 
 func Heyzo(id string) Site {
+	const providerId = "provider_id"
+
 	return Site{
 		Url:       fmt.Sprintf("http://m.heyzo.com/moviepages/%s/index.html", id),
 		UserAgent: MobileUserAgent,
@@ -23,6 +25,6 @@ func Heyzo(id string) Site {
 			Label:    Selector("null"),
 			Genre:    Selector("#keyword > ul > ul > li > a"),
 			Images:   Selector("#gallery > div > a > img").Attribute("src").Replace("thumbnail_", ""),
-		},
+		}.AddExtra(providerId, Selector("input[name=provider_id]").Attribute("value")),
 	}
 }
