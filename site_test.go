@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
+	"github.com/ruriio/tidy/sites"
 	"testing"
-	"tidy/sites"
 )
 
 func TestScrape(t *testing.T) {
@@ -17,7 +17,7 @@ func TestScrape(t *testing.T) {
 	//meta := Scrape(sites.Fantia("8209"))
 	//meta := Scrape(sites.Getchu("19622"))
 	//meta := Scrape(sites.Tokyo("n1236"))
-	meta := Scrape(sites.Pondo("052416_304"))
+	site := sites.Pondo("052416_304")
 
-	fmt.Println(meta.Json())
+	fmt.Println(site.Meta().Json())
 }

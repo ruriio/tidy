@@ -35,13 +35,13 @@ func Move(from string, to string) {
 		dest = to + name
 	}
 
-	if isDirectory(from) && !exists(dest) {
+	if IsDirectory(from) && !exists(dest) {
 		// rename dir name directly
 		mkdirParent(dest)
 		err := os.Rename(from, dest)
 		check(err)
 	} else {
-		if isDirectory(from) {
+		if IsDirectory(from) {
 			// prevent dir be moved to same name sub dir
 			dest = strings.TrimSuffix(dest, "/")
 		}
@@ -90,7 +90,7 @@ func exists(name string) bool {
 	return err == nil
 }
 
-func isDirectory(path string) bool {
+func IsDirectory(path string) bool {
 	fileInfo, err := os.Stat(path)
 	if err != nil {
 		return false

@@ -9,17 +9,25 @@ import (
 	"log"
 	"path"
 	"path/filepath"
+	"strings"
 )
 
-var siteCmd = &Command{
-	Use:     "site",
+var scrapeCmd = &Command{
+	Use:     "scrape",
 	Aliases: []string{"dmm", "fc2"},
-	Short:   "Site meta info",
+	Short:   "Scrape site meta info",
 	Long:    `Get site meta info`,
 	Run:     run,
 }
 
 var siteMap = make(map[string]func(string) Site)
+
+var extensions = map[string]bool{
+	".mp4": true,
+	".mkv": true,
+	".wmv": true,
+	".avi": true,
+}
 
 func run(cmd *Command, args []string) {
 
@@ -50,7 +58,10 @@ func scrapeDir(siteId string) {
 	}
 
 	for _, file := range files {
-		scrape(siteId, file)
+		ext := strings.ToLower(filepath.Ext(file))
+		if IsDirectory(file) || extensions[ext] {
+			scrape(siteId, file)
+		}
 	}
 }
 

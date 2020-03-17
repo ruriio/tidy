@@ -28,7 +28,7 @@ func addConfigs() {
 
 func addCommands() {
 	rootCmd.AddCommand(versionCmd)
-	rootCmd.AddCommand(siteCmd)
+	rootCmd.AddCommand(scrapeCmd)
 }
 
 func addFlags() {
