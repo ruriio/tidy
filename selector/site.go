@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
 	. "tidy/model"
 )
 
@@ -19,6 +20,7 @@ const MobileUserAgent string = "Mozilla/5.0 (iPhone; CPU iPhone OS 10_3_1 like M
 	"AppleWebKit/603.1.30 (KHTML, like Gecko) Version/10.0 Mobile/14E304 Safari/602.1"
 
 type Site struct {
+	Key     string
 	Url       string
 	WebUrl    string
 	UserAgent string
@@ -29,6 +31,7 @@ type Site struct {
 	Next      *Site
 	Decor     Decor
 	meta      Meta
+	Path      string
 
 	Selector
 }
@@ -50,6 +53,12 @@ func (site Site) Meta() Meta {
 	} else {
 		site.meta.Url = site.Url
 	}
+
+	if len(site.Path) > 0 {
+		site.meta.Extras = make(map[string]string)
+		site.meta.Extras["path"] = site.path(site.meta)
+	}
+
 	if site.Decor != nil {
 		return *site.Decor.Decorate(&site.meta)
 	} else {
@@ -181,6 +190,12 @@ func (site Site) get() (*http.Response, error) {
 	}
 
 	return client.Do(req)
+}
+
+func (site Site) path(meta Meta) string {
+	var replacer = strings.NewReplacer("$Title", meta.Title, "$Id", site.Key, "$Actor",
+		meta.Actor, "$Series", meta.Series, "$Producer", meta.Producer)
+	return replacer.Replace(site.Path)
 }
 
 func oneOf(first string, second string) string {

@@ -23,9 +23,13 @@ type Meta struct {
 }
 
 func (meta Meta) Json() string {
+	return string(meta.Byte())
+}
+
+func (meta Meta) Byte() []byte {
 	out, err := util.JSONMarshal(meta)
 	if err != nil {
 		log.Panic(err)
 	}
-	return string(out)
+	return out
 }

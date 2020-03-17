@@ -3,8 +3,10 @@ package cmd
 import (
 	. "fmt"
 	. "github.com/spf13/cobra"
+	"path"
 	. "tidy/selector"
 	. "tidy/sites"
+	"tidy/util"
 )
 
 var siteCmd = &Command{
@@ -15,8 +17,10 @@ var siteCmd = &Command{
 	Run: func(cmd *Command, args []string) {
 		initSites()
 		if len(args) > 0 {
-			site := siteMap[cmd.CalledAs()](args[0])
-			Println(site.Meta().Json())
+			id := args[0]
+			key := cmd.CalledAs()
+			execute(id, key)
+
 		} else {
 			Println("Need at least 1 args.")
 		}
@@ -28,4 +32,14 @@ var siteMap = make(map[string]func(string) Site)
 func initSites() {
 	siteMap["dmm"] = Dmm
 	siteMap["fc2"] = Fc2
+}
+
+func execute(id string, key string) {
+	site := siteMap[key](id)
+	meta := site.Meta()
+
+	dir := meta.Extras["path"]
+	file := path.Join(dir, "meta.json")
+	util.Move(id, dir)
+	util.Write(file, meta.Byte())
 }
