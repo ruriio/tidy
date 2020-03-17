@@ -3,7 +3,7 @@ package sites
 import (
 	"fmt"
 	"net/http"
-	. "tidy/selector"
+	. "github.com/ruriio/tidy/selector"
 )
 
 func Getchu(id string) Site {

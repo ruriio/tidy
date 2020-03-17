@@ -2,8 +2,8 @@ package sites
 
 import (
 	"fmt"
+	. "github.com/ruriio/tidy/selector"
 	"net/http"
-	. "tidy/selector"
 )
 
 func Fantia(id string) Site {

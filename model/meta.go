@@ -1,8 +1,8 @@
 package model
 
 import (
+	"github.com/ruriio/tidy/util"
 	"log"
-	"tidy/util"
 )
 
 type Meta struct {

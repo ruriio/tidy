@@ -3,9 +3,9 @@ package sites
 import (
 	"encoding/json"
 	"fmt"
+	. "github.com/ruriio/tidy/model"
+	. "github.com/ruriio/tidy/selector"
 	"log"
-	. "tidy/model"
-	. "tidy/selector"
 )
 
 func Pondo(id string) Site {

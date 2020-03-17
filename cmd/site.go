@@ -2,13 +2,13 @@ package cmd
 
 import (
 	. "fmt"
+	. "github.com/ruriio/tidy/selector"
+	. "github.com/ruriio/tidy/sites"
+	. "github.com/ruriio/tidy/util"
 	. "github.com/spf13/cobra"
 	"log"
 	"path"
 	"path/filepath"
-	. "tidy/selector"
-	. "tidy/sites"
-	"tidy/util"
 )
 
 var siteCmd = &Command{
@@ -60,7 +60,7 @@ func scrape(siteId string, id string) {
 
 	dir := meta.Extras["path"]
 	file := path.Join(dir, "meta.json")
-	util.Move(id, dir)
-	util.Write(file, meta.Byte())
-	util.DownloadMedias(dir, meta.Poster, meta.Sample, meta.Images)
+	Move(id, dir)
+	Write(file, meta.Byte())
+	DownloadMedias(dir, meta.Poster, meta.Sample, meta.Images)
 }

@@ -2,7 +2,7 @@ package sites
 
 import (
 	"fmt"
-	. "tidy/selector"
+	. "github.com/ruriio/tidy/selector"
 )
 
 func CaribPr(id string) Site {

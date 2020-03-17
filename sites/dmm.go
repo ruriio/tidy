@@ -2,9 +2,9 @@ package sites
 
 import (
 	"fmt"
+	. "github.com/ruriio/tidy/selector"
 	"path"
 	"strings"
-	. "tidy/selector"
 )
 
 func Dmm(id string) Site {

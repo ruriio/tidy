@@ -1,6 +1,6 @@
 package main
 
-import "tidy/cmd"
+import "github.com/ruriio/tidy/cmd"
 
 func main() {
 	cmd.Execute()

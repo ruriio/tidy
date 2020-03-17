@@ -4,13 +4,13 @@ import (
 	"bufio"
 	"encoding/json"
 	"github.com/PuerkitoBio/goquery"
+	. "github.com/ruriio/tidy/model"
 	"golang.org/x/net/html/charset"
 	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"strings"
-	. "tidy/model"
 )
 
 const UserAgent string = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) " +
