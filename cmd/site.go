@@ -3,7 +3,9 @@ package cmd
 import (
 	. "fmt"
 	. "github.com/spf13/cobra"
+	"log"
 	"path"
+	"path/filepath"
 	. "tidy/selector"
 	. "tidy/sites"
 	"tidy/util"
@@ -24,9 +26,13 @@ func run(cmd *Command, args []string) {
 	initSites()
 
 	if len(args) > 0 {
+		siteId := cmd.CalledAs()
 		id := args[0]
-		key := cmd.CalledAs()
-		execute(id, key)
+		if id == "." {
+			scrapeDir(siteId)
+		} else {
+			scrape(id, siteId)
+		}
 	} else {
 		Println("Need at least 1 args.")
 	}
@@ -37,8 +43,19 @@ func initSites() {
 	siteMap["fc2"] = Fc2
 }
 
-func execute(id string, key string) {
-	site := siteMap[key](id)
+func scrapeDir(siteId string) {
+	files, err := filepath.Glob("*")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, file := range files {
+		scrape(siteId, file)
+	}
+}
+
+func scrape(siteId string, id string) {
+	site := siteMap[siteId](id)
 	meta := site.Meta()
 
 	dir := meta.Extras["path"]

@@ -29,10 +29,10 @@ func initConfigs() {
 
 	err := viper.ReadInConfig()
 	if err != nil {
-		panic(fmt.Errorf("Fatal error config file: %s \n", err))
+		fmt.Printf("Fatal error config file: %s \n", err)
+	} else {
+		fmt.Println("Using config file:", viper.ConfigFileUsed())
 	}
-
-	fmt.Println("Using config file:", viper.ConfigFileUsed())
 }
 
 func er(msg interface{}) {
