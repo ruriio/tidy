@@ -19,7 +19,7 @@ func Dmm(id string) Site {
 			Actor:    Select("ul.parts-maindata > li > a > span"),
 			Poster:   Select(".package").Replace("ps.jpg", "pl.jpg").Attribute("src"),
 			Producer: Select(".parts-subdata"),
-			Sample:   Select(".play-btn"),
+			Sample:   Select(".play-btn").Attribute("href").Replace("_sm_", "_mhb_"),
 			Series:   Select("#work-mono-info > dl:nth-child(4) > dd"),
 			Release:  Select("#work-mono-info > dl:nth-child(8) > dd"),
 			Duration: Select("#work-mono-info > dl:nth-child(9) > dd"),
