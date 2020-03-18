@@ -58,6 +58,11 @@ func scrapeDir(siteId string) {
 	}
 
 	for _, file := range files {
+
+		if file == siteId {
+			continue
+		}
+
 		ext := strings.ToLower(filepath.Ext(file))
 		if IsDirectory(file) || extensions[ext] {
 			scrape(siteId, file)
