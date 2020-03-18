@@ -8,11 +8,19 @@ import (
 )
 
 func Dmm(id string) Site {
+	search := Site{
+		Key:       parseDmmId(id),
+		Url:       fmt.Sprintf("https://www.dmm.co.jp/mono/dvd/-/search/=/searchstr=%s/", parseDmmId(id)),
+		UserAgent: MobileUserAgent,
+		Selector: Selector{}.AddExtra("search",
+			Select("a[href^=\"https://www.dmm.co.jp/mono/dvd/-/detail/=/cid=\"]").Attribute("href")),
+	}
 	return Site{
 		Key:       parseDmmKey(id),
 		Url:       fmt.Sprintf("https://www.dmm.co.jp/mono/dvd/-/detail/=/cid=%s/", parseDmmId(id)),
 		UserAgent: MobileUserAgent,
 		Path:      "dmm/$Actor/$Id $Title/",
+		Search:    &search,
 
 		Selector: Selector{
 			Title:    Select("hgroup > h1").Replace("DVD", "", "Blu-ray", ""),

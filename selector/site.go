@@ -26,21 +26,25 @@ type Site struct {
 	UserAgent string
 	Charset   string
 	Cookies   []http.Cookie
-	Json      bool
-	JsonData  interface{}
-	Next      *Site
-	Decor     Decor
-	meta      Meta
 	Path      string
 
 	Selector
+
+	Json     bool
+	JsonData interface{}
+
+	Decor Decor
+
+	meta   Meta
+	Next   *Site
+	Search *Site // if directly parse failed, get meta url from search result.
 }
 
 func (site Site) Decorate(meta *Meta) *Meta {
 	return &site.meta
 }
 
-func (site Site) Meta() Meta {
+func (site *Site) Meta() Meta {
 	site.meta = Meta{}
 	if site.Json {
 		site.meta = site.parseJson()
@@ -66,7 +70,7 @@ func (site Site) Meta() Meta {
 	}
 }
 
-func (site Site) parseJson() Meta {
+func (site *Site) parseJson() Meta {
 	var meta = Meta{}
 	body, err := ioutil.ReadAll(site.Body())
 	err = json.Unmarshal(body, &site.JsonData)
@@ -105,7 +109,7 @@ func (site Site) parseJson() Meta {
 	return meta
 }
 
-func (site Site) parseHtml() Meta {
+func (site *Site) parseHtml() Meta {
 	var meta = Meta{}
 	// load the HTML document
 	doc, err := goquery.NewDocumentFromReader(site.Body())
@@ -150,7 +154,7 @@ func (site Site) parseHtml() Meta {
 	return meta
 }
 
-func (site Site) Body() io.ReadCloser {
+func (site *Site) Body() io.ReadCloser {
 	resp, err := site.get()
 
 	if err != nil {
@@ -160,6 +164,16 @@ func (site Site) Body() io.ReadCloser {
 
 	if resp.StatusCode != 200 {
 		log.Printf("stats code error: %d %s\n", resp.StatusCode, resp.Status)
+
+		// get meta url from search result
+		url := site.search()
+		if len(url) > 0 {
+			site.Url = url
+			site.WebUrl = url
+			return site.Body()
+		} else {
+			log.Fatal("Error: No meta url found: " + site.Key)
+		}
 	}
 
 	body := resp.Body
@@ -176,7 +190,7 @@ func (site Site) Body() io.ReadCloser {
 	return body
 }
 
-func (site Site) get() (*http.Response, error) {
+func (site *Site) get() (*http.Response, error) {
 	log.Printf("url: %s", site.Url)
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", site.Url, nil)
@@ -192,7 +206,29 @@ func (site Site) get() (*http.Response, error) {
 	return client.Do(req)
 }
 
-func (site Site) path(meta Meta) string {
+func (site *Site) search() string {
+	if site.Search == nil {
+		return ""
+	}
+	doc, err := goquery.NewDocumentFromReader(site.Search.Body())
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	hrefs := site.Search.Extras["search"].Values(doc)
+
+	for _, href := range hrefs {
+		if strings.Contains(href, site.Search.Key) {
+			log.Println("find search result: " + href)
+			return href
+		}
+	}
+
+	return ""
+}
+
+func (site *Site) path(meta Meta) string {
 	var replacer = strings.NewReplacer("$Title", meta.Title, "$Id", site.Key, "$Actor",
 		meta.Actor, "$Series", meta.Series, "$Producer", meta.Producer)
 	path := replacer.Replace(site.Path)
