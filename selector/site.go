@@ -20,7 +20,7 @@ const MobileUserAgent string = "Mozilla/5.0 (iPhone; CPU iPhone OS 10_3_1 like M
 	"AppleWebKit/603.1.30 (KHTML, like Gecko) Version/10.0 Mobile/14E304 Safari/602.1"
 
 type Site struct {
-	Key     string
+	Key       string
 	Url       string
 	WebUrl    string
 	UserAgent string
@@ -195,7 +195,14 @@ func (site Site) get() (*http.Response, error) {
 func (site Site) path(meta Meta) string {
 	var replacer = strings.NewReplacer("$Title", meta.Title, "$Id", site.Key, "$Actor",
 		meta.Actor, "$Series", meta.Series, "$Producer", meta.Producer)
-	return replacer.Replace(site.Path)
+	str := replacer.Replace(site.Path)
+
+	// fix for filename too long error
+	if len(str) > 204 {
+		str = string([]rune(str)[0:80])
+	}
+
+	return str
 }
 
 func oneOf(first string, second string) string {
