@@ -15,7 +15,7 @@ func Dmm(id string) Site {
 		Path:      "dmm/$Actor/$Id $Title/",
 
 		Selector: Selector{
-			Title:    Select(".ttl-grp").Replace("DVD", "", "Blu-ray", ""),
+			Title:    Select("hgroup > h1").Replace("DVD", "", "Blu-ray", ""),
 			Actor:    Select("ul.parts-maindata > li > a > span"),
 			Poster:   Select(".package").Replace("ps.jpg", "pl.jpg").Attribute("src"),
 			Producer: Select(".parts-subdata"),
