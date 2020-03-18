@@ -195,14 +195,18 @@ func (site Site) get() (*http.Response, error) {
 func (site Site) path(meta Meta) string {
 	var replacer = strings.NewReplacer("$Title", meta.Title, "$Id", site.Key, "$Actor",
 		meta.Actor, "$Series", meta.Series, "$Producer", meta.Producer)
-	str := replacer.Replace(site.Path)
+	path := replacer.Replace(site.Path)
 
 	// fix for filename too long error
-	if len(str) > 204 {
-		str = string([]rune(str)[0:80])
+	if len(path) > 204 {
+		path = string([]rune(path)[0:80])
 	}
 
-	return str
+	if !strings.HasSuffix(path, "/") {
+		path += "/"
+	}
+
+	return path
 }
 
 func oneOf(first string, second string) string {
