@@ -18,7 +18,7 @@ func mkdir(name string) {
 
 func mkdirParent(dest string) {
 	dir := path.Dir(path.Clean(dest))
-	err := os.MkdirAll(dir, 0755)
+	err := os.MkdirAll(dir, 0777)
 	check(err)
 }
 
@@ -70,7 +70,7 @@ func Write(file string, data []byte) {
 	dir := path.Dir(file)
 	mkdir(dir)
 
-	err := ioutil.WriteFile(file, data, 0755)
+	err := ioutil.WriteFile(file, data, 0777)
 	check(err)
 }
 
