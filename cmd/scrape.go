@@ -79,5 +79,5 @@ func scrape(siteId string, id string) {
 	file := path.Join(dir, "meta.json")
 	Move(id, dir)
 	Write(file, meta.Byte())
-	//DownloadMedias(dir, meta.Poster, meta.Sample, meta.Images)
+	DownloadMedias(dir, meta.Poster, meta.Sample, meta.Images)
 }
