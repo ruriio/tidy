@@ -3,12 +3,17 @@ package sites
 import (
 	"fmt"
 	. "github.com/ruriio/tidy/selector"
+	"regexp"
+	"strings"
 )
 
 func Fc2(id string) Site {
+	id = parseFc2Id(id)
+
 	return Site{
 		Url:       fmt.Sprintf("https://adult.contents.fc2.com/article/%s/", id),
 		UserAgent: MobileUserAgent,
+		Path:      "fc2/$Actor/FC2-PPV-$Id $Title/",
 
 		Selector: Selector{
 			Title:    Select(".items_article_MainitemNameTitle"),
@@ -25,4 +30,16 @@ func Fc2(id string) Site {
 			Images:   Select("li[data-img^=\"https://storage\"]").Attribute("data-img"),
 		},
 	}
+}
+
+func parseFc2Id(id string) string {
+	id = strings.ToLower(id)
+	if strings.HasPrefix(id, "fc2") {
+		re := regexp.MustCompile(`\d{4,}`)
+		matches := re.FindAllString(id, -1)
+		if len(matches) > 0 {
+			return matches[0]
+		}
+	}
+	return ""
 }

@@ -39,7 +39,7 @@ func run(cmd *Command, args []string) {
 		if id == "." {
 			scrapeDir(siteId)
 		} else {
-			scrape(id, siteId)
+			scrape(siteId, id)
 		}
 	} else {
 		Println("Need at least 1 args.")

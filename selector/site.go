@@ -229,7 +229,13 @@ func (site *Site) search() string {
 }
 
 func (site *Site) path(meta Meta) string {
-	var replacer = strings.NewReplacer("$Title", meta.Title, "$Id", site.Key, "$Actor",
+	key := site.Key
+
+	if len(key) == 0 {
+		key = meta.Id
+	}
+
+	var replacer = strings.NewReplacer("$Title", meta.Title, "$Id", key, "$Actor",
 		meta.Actor, "$Series", meta.Series, "$Producer", meta.Producer)
 	path := replacer.Replace(site.Path)
 
