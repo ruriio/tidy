@@ -4,37 +4,38 @@ import (
 	"fmt"
 	. "github.com/ruriio/tidy/selector"
 	"net/http"
+	"path"
+	"strings"
 )
 
 func Mgs(id string) Site {
 
-	mobile := Site{
+	id = parseMgsKey(id)
+
+	return Site{
 		Url:       fmt.Sprintf("https://sp.mgstage.com/product/product_detail/SP-%s/", id),
 		UserAgent: MobileUserAgent,
 		Cookies:   []http.Cookie{{Name: "adc", Value: "1"}},
+		Path:      "mgs/$Series/$Id $Title/",
 
 		Selector: Selector{
-			Title:  Select(".sample-image-wrap.h1 > img").Attribute("alt"),
-			Actor:  Select("a.actor"),
-			Poster: Select(".sample-image-wrap.h1").Attribute("href"),
-			Sample: Select("#sample-movie").Attribute("src"),
-			Series: Select("a.series"),
-			Label:  Select("null"),
-			Images: Select("a[class^=\"sample-image-wrap sample\"]").Attribute("href"),
+			Id:       Preset(id),
+			Title:    Select(".sample-image-wrap.h1 > img").Attribute("alt"),
+			Actor:    Select("a.actor"),
+			Poster:   Select(".sample-image-wrap.h1").Attribute("href"),
+			Sample:   Select("#sample-movie").Attribute("src"),
+			Series:   Select("a.series"),
+			Label:    Select("null"),
+			Images:   Select("a[class^=\"sample-image-wrap sample\"]").Attribute("href"),
+			Duration: Match(`\d{2,}分`),
+			Release:  Match(`\d{4}/\d{2}/\d{2}`),
+			Producer: Match(`メーカー\s.*\s`).Replace("メーカー", ""),
+			Genre:    Select(".info > dl > dd > a"),
 		},
 	}
+}
 
-	return Site{
-		Url:       fmt.Sprintf("https://www.mgstage.com/product/product_detail/%s/", id),
-		UserAgent: UserAgent,
-		Cookies:   mobile.Cookies,
-		Selector: Selector{
-			Producer: Select("div.detail_left > div > table:nth-child(3) > tbody > tr:nth-child(2) > td > a"),
-			Release:  Select("div.detail_left > div > table:nth-child(3) > tbody > tr:nth-child(5) > td"),
-			Duration: Select("div.detail_left > div > table:nth-child(3) > tbody > tr:nth-child(3) > td"),
-			Id:       Select("div.detail_left > div > table:nth-child(3) > tbody > tr:nth-child(4) > td"),
-			Genre:    Select("div.detail_left > div > table:nth-child(3) > tbody > tr:nth-child(9) > td > a"),
-		},
-		Next: &mobile,
-	}
+func parseMgsKey(key string) string {
+	ext := path.Ext(key)
+	return strings.ToUpper(strings.TrimSuffix(key, ext))
 }

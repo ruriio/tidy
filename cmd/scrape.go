@@ -14,7 +14,7 @@ import (
 
 var scrapeCmd = &Command{
 	Use:     "scrape",
-	Aliases: []string{"dmm", "fc2"},
+	Aliases: []string{"dmm", "fc2", "mgs"},
 	Short:   "Scrape site meta info",
 	Long:    `Get site meta info`,
 	Run:     run,
@@ -49,6 +49,7 @@ func run(cmd *Command, args []string) {
 func initSites() {
 	siteMap["dmm"] = Dmm
 	siteMap["fc2"] = Fc2
+	siteMap["mgs"] = Mgs
 }
 
 func scrapeDir(siteId string) {
@@ -78,5 +79,5 @@ func scrape(siteId string, id string) {
 	file := path.Join(dir, "meta.json")
 	Move(id, dir)
 	Write(file, meta.Byte())
-	DownloadMedias(dir, meta.Poster, meta.Sample, meta.Images)
+	//DownloadMedias(dir, meta.Poster, meta.Sample, meta.Images)
 }

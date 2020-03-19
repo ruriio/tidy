@@ -241,8 +241,10 @@ func (site *Site) path(meta Meta) string {
 		key = meta.Id
 	}
 
-	var replacer = strings.NewReplacer("$Title", meta.Title, "$Id", key, "$Actor",
-		meta.Actor, "$Series", meta.Series, "$Producer", meta.Producer)
+	var replacer = strings.NewReplacer("$Title", meta.Title, "$Id", key,
+		"$Actor", oneOf(meta.Actor, meta.Producer, meta.Series),
+		"$Series", oneOf(meta.Series, meta.Producer, meta.Actor),
+		"$Producer", oneOf(meta.Producer, meta.Series, meta.Actor))
 	path := replacer.Replace(site.Path)
 
 	// fix for filename too long error
@@ -257,20 +259,22 @@ func (site *Site) path(meta Meta) string {
 	return path
 }
 
-func oneOf(first string, second string) string {
-	if len(first) > 0 {
-		return first
-	} else {
-		return second
+func oneOf(str ...string) string {
+	for _, s := range str {
+		if len(s) > 0 {
+			return s
+		}
 	}
+	return str[0]
 }
 
-func oneOfArray(first []string, second []string) []string {
-	if len(first) > 0 {
-		return first
-	} else {
-		return second
+func oneOfArray(arr ...[]string) []string {
+	for _, a := range arr {
+		if len(a) > 0 {
+			return a
+		}
 	}
+	return arr[0]
 }
 
 func decodeHTMLBody(body io.Reader, encoding string) (io.ReadCloser, error) {

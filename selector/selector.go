@@ -106,9 +106,12 @@ func (selector Item) matcherValue(doc *goquery.Document) string {
 
 	matches := re.FindAllString(text, -1)
 	if len(matches) > 0 {
-		return matches[0]
+		text = matches[0]
 	}
-	return ""
+	if selector.replacer != nil {
+		text = selector.replacer.Replace(strings.TrimSpace(text))
+	}
+	return strings.TrimSpace(text)
 }
 
 func (selector *Item) Values(doc *goquery.Document) []string {
