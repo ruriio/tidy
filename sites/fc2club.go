@@ -6,9 +6,12 @@ import (
 )
 
 func Fc2Club(id string) Site {
+	url := fmt.Sprintf("https://fc2club.com/html/FC2-%s.html", id)
+
 	return Site{
-		Url:       fmt.Sprintf("https://fc2club.com/html/FC2-%s.html", id),
+		Url:       url,
 		UserAgent: MobileUserAgent,
+		Key:       id,
 
 		Selector: Selector{
 			Title:    Select("div.col-sm-8 > h3").Replace(fmt.Sprintf("FC2-%s ", id), ""),
@@ -23,6 +26,6 @@ func Fc2Club(id string) Site {
 			Label:    Select("null"),
 			Genre:    Select("null"),
 			Images:   Select("ul.slides > li > img").Attribute("src").Replace("/upload", "https://fc2club.com/upload"),
-		},
+		}.AddExtra("url", Preset(url)),
 	}
 }

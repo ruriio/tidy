@@ -59,7 +59,9 @@ func (site *Site) Meta() Meta {
 	}
 
 	if len(site.Path) > 0 {
-		site.meta.Extras = make(map[string]string)
+		if site.meta.Extras == nil {
+			site.meta.Extras = make(map[string]string)
+		}
 		site.meta.Extras["path"] = site.path(site.meta)
 	}
 
@@ -136,6 +138,10 @@ func (site *Site) parseHtml() Meta {
 	meta.Label = oneOf(site.Label.Value(doc), next.Label)
 	meta.Genre = oneOfArray(site.Genre.Values(doc), next.Genre)
 	meta.Images = oneOfArray(site.Images.Values(doc), next.Images)
+
+	if meta.Id == "" && site.Next != nil {
+		meta.Id = oneOf(site.Key, site.Next.Key)
+	}
 
 	// extract extras to meta
 	if site.Extras != nil {
