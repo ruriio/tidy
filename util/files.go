@@ -22,12 +22,12 @@ func mkdirParent(dest string) {
 	check(err)
 }
 
-func Move(from string, to string) {
+func Move(from string, to string) string {
 
 	dest := to
 
 	if !exists(from) {
-		return
+		return to
 	}
 
 	if isFile(from) && strings.HasSuffix(to, "/") {
@@ -40,6 +40,7 @@ func Move(from string, to string) {
 		mkdirParent(dest)
 		err := os.Rename(from, dest)
 		check(err)
+		return dest
 	} else {
 		if IsDirectory(from) {
 			// prevent dir be moved to same name sub dir
@@ -51,7 +52,13 @@ func Move(from string, to string) {
 
 		name := path.Base(dest)
 		file := path.Join(dir, name)
-		ext := path.Ext(name)
+
+		var ext string
+
+		if isFile(from) {
+			ext = path.Ext(name)
+		}
+
 		base := strings.TrimSuffix(name, ext)
 
 		count := 1
@@ -63,6 +70,12 @@ func Move(from string, to string) {
 
 		err := os.Rename(from, file)
 		check(err)
+
+		if isFile(file) {
+			return path.Dir(file)
+		} else {
+			return file
+		}
 	}
 }
 

@@ -14,7 +14,7 @@ import (
 
 var scrapeCmd = &Command{
 	Use:     "scrape",
-	Aliases: []string{"dmm", "fc2", "mgs"},
+	Aliases: []string{"dmm", "fc2", "mgs", "ave"},
 	Short:   "Scrape site meta info",
 	Long:    `Get site meta info`,
 	Run:     run,
@@ -50,6 +50,7 @@ func initSites() {
 	siteMap["dmm"] = Dmm
 	siteMap["fc2"] = Fc2
 	siteMap["mgs"] = Mgs
+	siteMap["ave"] = Ave
 }
 
 func isSiteDir(name string) bool {
@@ -85,8 +86,8 @@ func scrape(siteId string, id string) {
 	}
 
 	dir := Sprintf("%v", meta.Extras["path"])
+	dir = Move(id, dir)
 	file := path.Join(dir, "meta.json")
-	Move(id, dir)
 	Write(file, meta.Byte())
 	DownloadMedias(dir, meta.Poster, meta.Sample, meta.Images)
 }

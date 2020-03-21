@@ -179,6 +179,11 @@ func (site *Site) parseHtml() Meta {
 }
 
 func (site *Site) Body() (io.ReadCloser, error) {
+
+	if site.Url == "" {
+		return site.searchAndGet()
+	}
+
 	resp, err := site.get()
 
 	if err != nil {
@@ -188,30 +193,33 @@ func (site *Site) Body() (io.ReadCloser, error) {
 
 	if resp.StatusCode != 200 {
 		log.Printf("stats code error: %d %s\n", resp.StatusCode, resp.Status)
+		return site.searchAndGet()
+	} else {
+		body := resp.Body
 
-		// get meta url from search result
-		url := site.search()
-		if len(url) > 0 {
-			site.Url = url
-			site.WebUrl = url
-			return site.Body()
-		} else {
-			return nil, errors.New("No metadata found for " + site.Key)
+		//printHtmlBody(resp)
+
+		// convert none utf-8 web page to utf-8
+		if site.Charset != "" {
+			body, err = decodeHTMLBody(resp.Body, site.Charset)
+			if err != nil {
+				log.Println(err)
+			}
 		}
+		return body, nil
 	}
+}
 
-	body := resp.Body
-
-	//printHtmlBody(resp)
-
-	// convert none utf-8 web page to utf-8
-	if site.Charset != "" {
-		body, err = decodeHTMLBody(resp.Body, site.Charset)
-		if err != nil {
-			log.Println(err)
-		}
+func (site *Site) searchAndGet() (io.ReadCloser, error) {
+	// get meta url from search result
+	url := site.search()
+	if len(url) > 0 {
+		site.Url = url
+		site.WebUrl = url
+		return site.Body()
+	} else {
+		return nil, errors.New("No metadata found for " + site.Key)
 	}
-	return body, nil
 }
 
 func (site *Site) get() (*http.Response, error) {
