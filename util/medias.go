@@ -57,7 +57,7 @@ func download(filepath string, url string) {
 func downloadM3u8(filepath string, url string) {
 	cmd := exec.Command("ffmpeg", "-i", url, "-bsf:a", "aac_adtstoasc",
 		"-vcodec", "copy", "-c", "copy", "-crf", "50", filepath)
-	cmd.Stderr = os.Stderr
+	//cmd.Stderr = os.Stderr
 	//cmd.Stdout = os.Stdout
 
 	log.Println(cmd.String())
