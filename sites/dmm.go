@@ -4,20 +4,22 @@ import (
 	"fmt"
 	. "github.com/ruriio/tidy/selector"
 	"path"
+	"regexp"
 	"strings"
 )
 
 func Dmm(id string) Site {
+	dmmId := parseDmmId(id)
 	search := Site{
-		Key:       parseDmmId(id),
-		Url:       fmt.Sprintf("https://www.dmm.co.jp/mono/dvd/-/search/=/searchstr=%s/", parseDmmId(id)),
+		Key:       dmmId,
+		Url:       fmt.Sprintf("https://www.dmm.co.jp/mono/dvd/-/search/=/searchstr=%s/", dmmId),
 		UserAgent: MobileUserAgent,
 		Selector: Selector{}.AddExtra("search",
 			Select("a[href^=\"https://www.dmm.co.jp/mono/dvd/-/detail/=/cid=\"]").Attribute("href")),
 	}
 	return Site{
 		Key:       parseDmmKey(id),
-		Url:       fmt.Sprintf("https://www.dmm.co.jp/mono/dvd/-/detail/=/cid=%s/", parseDmmId(id)),
+		Url:       fmt.Sprintf("https://www.dmm.co.jp/mono/dvd/-/detail/=/cid=%s/", dmmId),
 		UserAgent: MobileUserAgent,
 		Path:      "dmm/$Actor/$Id $Title/",
 		Search:    &search,
@@ -41,7 +43,15 @@ func Dmm(id string) Site {
 
 func parseDmmKey(key string) string {
 	ext := path.Ext(key)
-	return strings.ToUpper(strings.TrimSuffix(key, ext))
+	name := strings.ToUpper(strings.TrimSuffix(key, ext))
+	re := regexp.MustCompile(`[A-Z]{2,}-? ?\d{2,}`)
+
+	matches := re.FindAllString(name, -1)
+
+	if len(matches) > 0 {
+		return matches[0]
+	}
+	return "nil"
 }
 
 func parseDmmId(key string) string {
