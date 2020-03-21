@@ -6,7 +6,9 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/exec"
 	"path"
+	"strings"
 )
 
 func DownloadMedias(dir string, poster string, sample string, images []string) {
@@ -16,7 +18,11 @@ func DownloadMedias(dir string, poster string, sample string, images []string) {
 	}
 
 	if len(sample) > 0 {
-		download(path.Join(dir, "sample.mp4"), sample)
+		if strings.HasSuffix(sample, ".m3u8") {
+			downloadM3u8(path.Join(dir, "sample.mp4"), sample)
+		} else {
+			download(path.Join(dir, "sample.mp4"), sample)
+		}
 	}
 
 	for i, url := range images {
@@ -46,4 +52,18 @@ func download(filepath string, url string) {
 	}
 
 	io.Copy(out, resp.Body)
+}
+
+func downloadM3u8(filepath string, url string) {
+	cmd := exec.Command("ffmpeg", "-i", url, "-bsf:a", "aac_adtstoasc",
+		"-vcodec", "copy", "-c", "copy", "-crf", "50", filepath)
+	cmd.Stderr = os.Stderr
+	//cmd.Stdout = os.Stdout
+
+	log.Println(cmd.String())
+
+	err := cmd.Run()
+	if err != nil {
+		log.Println(err)
+	}
 }

@@ -31,7 +31,7 @@ func Ave(id string) Site {
 			Poster: Select("img[src^=\"https://imgs.aventertainments.com/new/jacket_images\"]").
 				Attribute("src").Replace("jacket_images", "bigcover"),
 			Producer: Select("a[href^=\"https://www.aventertainments.com/studio_products\"]"),
-			//Sample:   Preset(fmt.Sprintf("https://smovie.caribbeancom.com/sample/movies/%s/480p.mp4", id)),
+			Sample:   Match(`https://.*.m3u8`),
 			Series:   Select("a[href^=\"https://www.aventertainments.com/Series\""),
 			Release:  Match(`\d{1,}/\d{1,}/\d{4}`),
 			Duration: Match(`\d{2,} Min`),
