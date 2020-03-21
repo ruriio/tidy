@@ -3,6 +3,7 @@ package selector
 import (
 	"bufio"
 	"encoding/json"
+	"errors"
 	"github.com/PuerkitoBio/goquery"
 	. "github.com/ruriio/tidy/model"
 	"golang.org/x/net/html/charset"
@@ -74,7 +75,13 @@ func (site *Site) Meta() Meta {
 
 func (site *Site) parseJson() Meta {
 	var meta = Meta{}
-	body, err := ioutil.ReadAll(site.Body())
+	html, err := site.Body()
+
+	if err != nil {
+		log.Println(err)
+	}
+
+	body, err := ioutil.ReadAll(html)
 	err = json.Unmarshal(body, &site.JsonData)
 	if err != nil {
 		log.Println(err)
@@ -113,11 +120,18 @@ func (site *Site) parseJson() Meta {
 
 func (site *Site) parseHtml() Meta {
 	var meta = Meta{}
-	// load the HTML document
-	doc, err := goquery.NewDocumentFromReader(site.Body())
+	var doc *goquery.Document
+	body, err := site.Body()
 
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+	} else {
+		// load the HTML document
+		doc, err = goquery.NewDocumentFromReader(body)
+
+		if err != nil {
+			log.Println(err)
+		}
 	}
 
 	var next = Meta{}
@@ -160,7 +174,7 @@ func (site *Site) parseHtml() Meta {
 	return meta
 }
 
-func (site *Site) Body() io.ReadCloser {
+func (site *Site) Body() (io.ReadCloser, error) {
 	resp, err := site.get()
 
 	if err != nil {
@@ -178,7 +192,7 @@ func (site *Site) Body() io.ReadCloser {
 			site.WebUrl = url
 			return site.Body()
 		} else {
-			log.Fatal("Error: No meta url found: " + site.Key)
+			return nil, errors.New("No metadata found for " + site.Key)
 		}
 	}
 
@@ -193,7 +207,7 @@ func (site *Site) Body() io.ReadCloser {
 			log.Println(err)
 		}
 	}
-	return body
+	return body, nil
 }
 
 func (site *Site) get() (*http.Response, error) {
@@ -216,10 +230,18 @@ func (site *Site) search() string {
 	if site.Search == nil {
 		return ""
 	}
-	doc, err := goquery.NewDocumentFromReader(site.Search.Body())
+
+	body, err := site.Search.Body()
+	if err != nil {
+		log.Println(err)
+		return ""
+	}
+
+	doc, err := goquery.NewDocumentFromReader(body)
 
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		return ""
 	}
 
 	hrefs := site.Search.Extras["search"].Values(doc)

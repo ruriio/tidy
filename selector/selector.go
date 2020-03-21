@@ -84,7 +84,7 @@ func (selector Item) Texts(doc *goquery.Document) []string {
 
 func (selector *Item) Value(doc *goquery.Document) string {
 
-	if selector == nil {
+	if selector == nil || doc == nil {
 		return ""
 	}
 
@@ -117,7 +117,7 @@ func (selector Item) matcherValue(doc *goquery.Document) string {
 func (selector *Item) Values(doc *goquery.Document) []string {
 	var texts []string
 
-	if selector == nil {
+	if selector == nil || doc == nil {
 		return texts
 	}
 

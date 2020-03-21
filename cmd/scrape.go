@@ -52,6 +52,10 @@ func initSites() {
 	siteMap["mgs"] = Mgs
 }
 
+func isSiteDir(name string) bool {
+	return siteMap[name] != nil
+}
+
 func scrapeDir(siteId string) {
 	files, err := filepath.Glob("*")
 	if err != nil {
@@ -60,7 +64,8 @@ func scrapeDir(siteId string) {
 
 	for _, file := range files {
 
-		if file == siteId {
+		// ignore site dir
+		if isSiteDir(file) {
 			continue
 		}
 
@@ -74,6 +79,10 @@ func scrapeDir(siteId string) {
 func scrape(siteId string, id string) {
 	site := siteMap[siteId](id)
 	meta := site.Meta()
+
+	if len(meta.Title) == 0 {
+		return
+	}
 
 	dir := meta.Extras["path"]
 	file := path.Join(dir, "meta.json")
