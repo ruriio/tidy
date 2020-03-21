@@ -26,6 +26,6 @@ func Fc2Club(id string) Site {
 			Label:    Select("null"),
 			Genre:    Select("null"),
 			Images:   Select("ul.slides > li > img").Attribute("src").Replace("/upload", "https://fc2club.com/upload"),
-		}.AddExtra("url", Preset(url)),
+		}.Extra("url", Preset(url)),
 	}
 }

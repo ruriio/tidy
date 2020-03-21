@@ -34,10 +34,15 @@ type Item struct {
 	presets   []string
 	matcher   string
 	query     string
+	Plural    bool
 }
 
 func Select(selector string) *Item {
 	return &Item{selector: selector, attribute: "", replacer: strings.NewReplacer("", ""), preset: ""}
+}
+
+func Selects(selector string) *Item {
+	return &Item{selector: selector, replacer: strings.NewReplacer("", ""), Plural: true}
 }
 
 func Preset(preset string) *Item {
@@ -240,7 +245,7 @@ func queries(data map[string]interface{}, key string) []string {
 	return res
 }
 
-func (selectors Selector) AddExtra(key string, selector *Item) Selector {
+func (selectors Selector) Extra(key string, selector *Item) Selector {
 	if selectors.Extras == nil {
 		selectors.Extras = make(map[string]*Item)
 	}

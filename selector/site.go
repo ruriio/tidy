@@ -61,7 +61,7 @@ func (site *Site) Meta() Meta {
 
 	if len(site.Path) > 0 {
 		if site.meta.Extras == nil {
-			site.meta.Extras = make(map[string]string)
+			site.meta.Extras = make(map[string]interface{})
 		}
 		site.meta.Extras["path"] = site.path(site.meta)
 	}
@@ -159,9 +159,13 @@ func (site *Site) parseHtml() Meta {
 
 	// extract extras to meta
 	if site.Extras != nil {
-		meta.Extras = make(map[string]string)
+		meta.Extras = make(map[string]interface{})
 		for key, value := range site.Extras {
-			meta.Extras[key] = value.Value(doc)
+			if value.Plural {
+				meta.Extras[key] = value.Values(doc)
+			} else {
+				meta.Extras[key] = value.Value(doc)
+			}
 		}
 
 		for key, value := range next.Extras {
@@ -211,7 +215,7 @@ func (site *Site) Body() (io.ReadCloser, error) {
 }
 
 func (site *Site) get() (*http.Response, error) {
-	log.Printf("url: %s", site.Url)
+	log.Printf("get: %s", site.Url)
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", site.Url, nil)
 	if err != nil {

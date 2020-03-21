@@ -84,7 +84,7 @@ func scrape(siteId string, id string) {
 		return
 	}
 
-	dir := meta.Extras["path"]
+	dir := Sprintf("%v", meta.Extras["path"])
 	file := path.Join(dir, "meta.json")
 	Move(id, dir)
 	Write(file, meta.Byte())

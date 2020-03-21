@@ -25,6 +25,6 @@ func Heyzo(id string) Site {
 			Label:    Select("null"),
 			Genre:    Select("#keyword > ul > ul > li > a"),
 			Images:   Select("#gallery > div > a > img").Attribute("src").Replace("thumbnail_", ""),
-		}.AddExtra(providerId, Select("input[name=provider_id]").Attribute("value")),
+		}.Extra(providerId, Select("input[name=provider_id]").Attribute("value")),
 	}
 }
