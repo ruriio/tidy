@@ -259,7 +259,13 @@ func (site *Site) search() string {
 	hrefs := site.Search.Extras["search"].Values(doc)
 
 	for _, href := range hrefs {
-		if strings.Contains(href, site.Search.Key) {
+		matcher := site.Search.Extras["match"]
+		if matcher != nil {
+			if len(matcher.matcherText(href)) > 0 {
+				log.Println("match search result: " + href)
+				return href
+			}
+		} else if strings.Contains(href, site.Search.Key) {
 			log.Println("find search result: " + href)
 			return href
 		}

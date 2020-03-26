@@ -14,8 +14,9 @@ func Dmm(id string) Site {
 		Key:       dmmId,
 		Url:       fmt.Sprintf("https://www.dmm.co.jp/mono/dvd/-/search/=/searchstr=%s/", dmmId),
 		UserAgent: MobileUserAgent,
-		Selector: Selector{}.Extra("search",
-			Select("a[href^=\"https://www.dmm.co.jp/mono/dvd/-/detail/=/cid=\"]").Attribute("href")),
+		Selector: Selector{}.
+			Extra("search", Select("a[href^=\"https://www.dmm.co.jp/mono/dvd/-/detail/=/cid=\"]").Attribute("href")).
+			Extra("match", Match(fmt.Sprintf("cid=\\d{0,4}%s", dmmId))),
 	}
 	return Site{
 		Key:       parseDmmKey(id),
