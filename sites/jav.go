@@ -12,7 +12,7 @@ func Jav(id string) Site {
 		Key:       parseDmmKey(id),
 		Url:       url,
 		UserAgent: UserAgent,
-		Path:      "dmm/$Actor/$Id $Title/",
+		Path:      "dmm/$Actor/$Title/",
 		WebUrl:    url,
 
 		Selector: Selector{
