@@ -25,7 +25,7 @@ func Jav(id string) Site {
 			Duration: Match(`\d{0,4}分鐘`),
 			Id:       Match(`識別碼: [A-Z]{0,6}-\d{0,6}`).Replace("識別碼: ", ""),
 			Label:    Select("a[href^=\"https://www.javbus.com/label\"]"),
-			Genre:    Select(".genre"),
+			Genre:    Select(".genre > a[href^=\"https://www.javbus.com/genre\"]"),
 			Images:   Select("a.sample-box").Attribute("href"),
 		}.Extra("actors", Selects(".star-name")),
 	}
