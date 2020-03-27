@@ -10,6 +10,7 @@ import (
 
 func Dmm(id string) Site {
 	dmmId := parseDmmId(id)
+	next := Jav(id)
 	search := Site{
 		Key:       dmmId,
 		Url:       fmt.Sprintf("https://www.dmm.co.jp/mono/dvd/-/search/=/searchstr=%s/", dmmId),
@@ -24,6 +25,7 @@ func Dmm(id string) Site {
 		UserAgent: MobileUserAgent,
 		Path:      "dmm/$Actor/$Id $Title/",
 		Search:    &search,
+		Next:      &next,
 
 		Selector: Selector{
 			Title:    Select("hgroup > h1").Replace("DVD", "", "Blu-ray", ""),
