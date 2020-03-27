@@ -7,11 +7,13 @@ import (
 
 func Jav(id string) Site {
 	dmmId := parseDmmKey(id)
+	url := fmt.Sprintf("https://www.javbus.com/%s", dmmId)
 	return Site{
 		Key:       parseDmmKey(id),
-		Url:       fmt.Sprintf("https://www.javbus.com/%s", dmmId),
+		Url:       url,
 		UserAgent: UserAgent,
 		Path:      "dmm/$Actor/$Id $Title/",
+		WebUrl:    url,
 
 		Selector: Selector{
 			Title:    Select("h3"),

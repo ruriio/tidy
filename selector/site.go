@@ -59,6 +59,12 @@ func (site *Site) Meta() Meta {
 		site.meta.Url = site.Url
 	}
 
+	if site.Next != nil {
+		if len(site.Next.WebUrl) > 0 {
+			site.meta.Url = site.Next.WebUrl
+		}
+	}
+
 	if len(site.Path) > 0 {
 		if site.meta.Extras == nil {
 			site.meta.Extras = make(map[string]interface{})
