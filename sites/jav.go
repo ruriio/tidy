@@ -12,11 +12,10 @@ func Jav(id string) Site {
 		Key:       parseDmmKey(id),
 		Url:       url,
 		UserAgent: UserAgent,
-		Path:      "dmm/$Actor/$Title/",
 		WebUrl:    url,
 
 		Selector: Selector{
-			Title:    Select("h3"),
+			Title:    Select("h3").Replace(dmmId, ""),
 			Actor:    Select(".star-name"),
 			Poster:   Select(".bigImage").Attribute("href"),
 			Producer: Select("a[href^=\"https://www.javbus.com/studio/\"]"),

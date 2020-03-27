@@ -72,15 +72,15 @@ func (selector Item) Attribute(attr string) *Item {
 }
 
 func (selector Item) Text(doc *goquery.Document) string {
-	text := strings.TrimSpace(doc.Find(selector.selector).First().Text())
-	return selector.replacer.Replace(text)
+	text := doc.Find(selector.selector).First().Text()
+	return strings.TrimSpace(selector.replacer.Replace(text))
 }
 
 func (selector Item) Texts(doc *goquery.Document) []string {
 	var texts []string
 	doc.Find(selector.selector).Each(func(i int, selection *goquery.Selection) {
-		text := strings.TrimSpace(selection.Text())
-		text = selector.replacer.Replace(text)
+		text := selection.Text()
+		text = strings.TrimSpace(selector.replacer.Replace(text))
 		texts = append(texts, text)
 	})
 
@@ -153,7 +153,7 @@ func (selector Item) textOrAttr(selection *goquery.Selection) string {
 	} else {
 		text = selection.Text()
 	}
-	return selector.replacer.Replace(strings.TrimSpace(text))
+	return strings.TrimSpace(selector.replacer.Replace(text))
 }
 
 func (selector Item) Image(doc *goquery.Document) string {
