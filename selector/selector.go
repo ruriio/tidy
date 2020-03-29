@@ -31,6 +31,7 @@ type Item struct {
 	attribute string
 	replacer  *strings.Replacer
 	preset    string
+	format    string
 	presets   []string
 	matcher   string
 	query     string
@@ -63,6 +64,11 @@ func Query(query string) *Item {
 
 func (selector Item) Replace(oldNew ...string) *Item {
 	selector.replacer = strings.NewReplacer(oldNew...)
+	return &selector
+}
+
+func (selector Item) Format(format string) *Item {
+	selector.format = format
 	return &selector
 }
 
@@ -102,7 +108,13 @@ func (selector *Item) Value(doc *goquery.Document) string {
 	}
 
 	selection := doc.Find(selector.selector).First()
-	return selector.textOrAttr(selection)
+
+	value := selector.textOrAttr(selection)
+
+	if len(selector.format) > 0 {
+		value = fmt.Sprintf(selector.format, value)
+	}
+	return value
 }
 
 func (selector Item) matcherValue(doc *goquery.Document) string {
@@ -153,7 +165,14 @@ func (selector Item) textOrAttr(selection *goquery.Selection) string {
 	} else {
 		text = selection.Text()
 	}
-	return strings.TrimSpace(selector.replacer.Replace(text))
+
+	value := strings.TrimSpace(selector.replacer.Replace(text))
+
+	if len(selector.format) > 0 {
+		value = fmt.Sprintf(selector.format, value)
+	}
+
+	return value
 }
 
 func (selector Item) Image(doc *goquery.Document) string {

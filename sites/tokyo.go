@@ -10,10 +10,19 @@ import (
 
 func Tokyo(id string) Site {
 	id = parseTokyoKey(id)
-	return Site{
-		Url:       fmt.Sprintf("https://my.tokyo-hot.com/product/%s/", id),
+
+	search := Site{
+		Url:       fmt.Sprintf("https://my.tokyo-hot.com/product/?q=%s&lang=jp", id),
 		UserAgent: MobileUserAgent,
-		Path:      "dmm/$Actor/$Id $Title/",
+		Selector: Selector{}.Extra("search", Select("a.rm").Attribute("href").
+			Format("https://my.tokyo-hot.com/%s?lang=jp")),
+	}
+
+	return Site{
+		Url:       fmt.Sprintf("https://my.tokyo-hot.com/product/%s/?lang=jp", id),
+		UserAgent: MobileUserAgent,
+		Path:      "tokyo/$Actor/$Id $Title/",
+		Search:    &search,
 
 		Selector: Selector{
 			Title:    Select(".pagetitle"),
