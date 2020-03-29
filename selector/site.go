@@ -53,6 +53,14 @@ func (site *Site) Meta() Meta {
 		site.meta = site.parseHtml()
 	}
 
+	if site.meta.Extras == nil {
+		site.meta.Extras = make(map[string]interface{})
+	}
+
+	if len(site.Path) > 0 {
+		site.meta.Extras["path"] = site.path(site.meta)
+	}
+
 	if len(site.WebUrl) > 0 {
 		site.meta.Url = site.WebUrl
 	} else {
@@ -60,16 +68,9 @@ func (site *Site) Meta() Meta {
 	}
 
 	if site.Next != nil {
-		if len(site.Next.WebUrl) > 0 {
-			site.meta.Url = site.Next.WebUrl
+		if len(site.Next.Url) > 0 {
+			site.meta.Extras["nextUrl"] = site.Next.Url
 		}
-	}
-
-	if len(site.Path) > 0 {
-		if site.meta.Extras == nil {
-			site.meta.Extras = make(map[string]interface{})
-		}
-		site.meta.Extras["path"] = site.path(site.meta)
 	}
 
 	if site.Decor != nil {

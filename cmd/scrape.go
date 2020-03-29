@@ -9,18 +9,20 @@ import (
 	"log"
 	"path"
 	"path/filepath"
+	"reflect"
+	"runtime"
 	"strings"
 )
 
+var siteMap = registerSites()
+
 var scrapeCmd = &Command{
 	Use:     "scrape",
-	Aliases: []string{"dmm", "fc2", "mgs", "ave"},
+	Aliases: getAliases(),
 	Short:   "Scrape site meta info",
 	Long:    `Get site meta info`,
 	Run:     run,
 }
-
-var siteMap = make(map[string]func(string) Site)
 
 var extensions = map[string]bool{
 	".mp4": true,
@@ -30,9 +32,6 @@ var extensions = map[string]bool{
 }
 
 func run(cmd *Command, args []string) {
-
-	initSites()
-
 	if len(args) > 0 {
 		siteId := cmd.CalledAs()
 		id := args[0]
@@ -46,11 +45,34 @@ func run(cmd *Command, args []string) {
 	}
 }
 
-func initSites() {
-	siteMap["dmm"] = Dmm
-	siteMap["fc2"] = Fc2
-	siteMap["mgs"] = Mgs
-	siteMap["ave"] = Ave
+func registerSites() map[string]func(string) Site {
+	sites := make(map[string]func(string) Site)
+
+	register(sites, Dmm)
+	register(sites, Fc2)
+	register(sites, Mgs)
+	register(sites, Ave)
+	register(sites, Tokyo)
+	return sites
+}
+
+func register(sites map[string]func(string) Site, site func(string) Site) {
+	key := strings.ToLower(getFuncName(site))
+	sites[key] = site
+}
+
+func getAliases() []string {
+	var aliases []string
+	for site := range siteMap {
+		aliases = append(aliases, site)
+	}
+	return aliases
+}
+
+func getFuncName(i interface{}) string {
+	name := runtime.FuncForPC(reflect.ValueOf(i).Pointer()).Name()
+	parts := strings.Split(name, ".")
+	return parts[len(parts)-1]
 }
 
 func isSiteDir(name string) bool {

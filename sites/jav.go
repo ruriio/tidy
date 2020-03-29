@@ -12,7 +12,6 @@ func Jav(id string) Site {
 		Key:       parseDmmKey(id),
 		Url:       url,
 		UserAgent: UserAgent,
-		WebUrl:    url,
 
 		Selector: Selector{
 			Title:    Select("h3").Replace(dmmId, ""),

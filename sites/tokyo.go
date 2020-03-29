@@ -3,12 +3,17 @@ package sites
 import (
 	"fmt"
 	. "github.com/ruriio/tidy/selector"
+	"path"
+	"regexp"
+	"strings"
 )
 
 func Tokyo(id string) Site {
+	id = parseTokyoKey(id)
 	return Site{
 		Url:       fmt.Sprintf("https://my.tokyo-hot.com/product/%s/", id),
 		UserAgent: MobileUserAgent,
+		Path:      "dmm/$Actor/$Id $Title/",
 
 		Selector: Selector{
 			Title:    Select(".pagetitle"),
@@ -25,4 +30,17 @@ func Tokyo(id string) Site {
 			Images:   Select("a[rel=\"cap\"]").Attribute("href").Replace(" ", "%20"),
 		},
 	}
+}
+
+func parseTokyoKey(key string) string {
+	ext := path.Ext(key)
+	name := strings.ToLower(strings.TrimSuffix(key, ext))
+	re := regexp.MustCompile(`n-? ?\d{2,}`)
+
+	matches := re.FindAllString(name, -1)
+
+	if len(matches) > 0 {
+		return matches[0]
+	}
+	return "nil"
 }
