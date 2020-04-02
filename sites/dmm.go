@@ -3,7 +3,6 @@ package sites
 import (
 	"fmt"
 	. "github.com/ruriio/tidy/selector"
-	"path"
 	"regexp"
 	"strings"
 )
@@ -45,8 +44,7 @@ func Dmm(id string) Site {
 }
 
 func parseDmmKey(key string) string {
-	ext := path.Ext(key)
-	name := strings.ToUpper(strings.TrimSuffix(key, ext))
+	name := strings.ToUpper(key)
 	re := regexp.MustCompile(`[A-Z]{2,}-? ?\d{2,}`)
 
 	matches := re.FindAllString(name, -1)
