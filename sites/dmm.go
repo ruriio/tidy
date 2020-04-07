@@ -12,7 +12,7 @@ func Dmm(id string) Site {
 	next := Jav(id)
 	search := Site{
 		Key:       dmmId,
-		Url:       fmt.Sprintf("https://www.dmm.co.jp/mono/dvd/-/search/=/searchstr=%s/", dmmId),
+		Url:       fmt.Sprintf("https://www.dmm.co.jp/search/=/searchstr=%s/", dmmId),
 		UserAgent: MobileUserAgent,
 		Selector: Selector{}.
 			Extra("search", Select("a[href^=\"https://www.dmm.co.jp/mono/dvd/-/detail/=/cid=\"]").Attribute("href")).
