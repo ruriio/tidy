@@ -16,7 +16,7 @@ func Dmm(id string) Site {
 		UserAgent: MobileUserAgent,
 		Selector: Selector{}.
 			Extra("search", Select("a[href^=\"https://www.dmm.co.jp/mono/dvd/-/detail/=/cid=\"]").Attribute("href")).
-			Extra("match", Match(fmt.Sprintf("cid=\\d{0,4}%s", dmmId))),
+			Extra("match", Match(fmt.Sprintf("cid=[a-z_]{0,4}\\d{0,4}%s", dmmId))),
 	}
 	return Site{
 		Key:       parseDmmKey(id),
@@ -32,12 +32,12 @@ func Dmm(id string) Site {
 			Poster:   Select(".package").Replace("ps.jpg", "pl.jpg").Attribute("src"),
 			Producer: Select(".parts-subdata"),
 			Sample:   Select(".play-btn").Attribute("href"),
-			Series:   Select("#work-mono-info > dl:nth-child(4) > dd"),
-			Release:  Select("#work-mono-info > dl:nth-child(8) > dd"),
-			Duration: Select("#work-mono-info > dl:nth-child(9) > dd"),
-			Id:       Select("#work-mono-info > dl:nth-child(10) > dd"),
-			Label:    Select("#work-mono-info > dl:nth-child(6) > dd > ul > li > a"),
-			Genre:    Select("#work-mono-info > dl.box-genreinfo > dd > ul > li > a"),
+			Series:   Select(".box-taglink > li > a[href^=\"/mono/dvd/-/list/=/article=series/\"]"),
+			Release:  Match(`\d{4}/\d{2}/\d{2}`),
+			Duration: Match(`\d{2,}分`),
+			Id:       Select("品番 [a-z_\\d]*").Replace("品番 ", ""),
+			Label:    Select(".box-taglink > li > a[href^=\"/mono/dvd/-/list/=/article=label/\"]"),
+			Genre:    Select(".box-taglink > li > a[href^=\"/mono/dvd/-/list/=/article=keyword/\"]"),
 			Images:   Select("#sample-list > ul > li > a > span > img").Replace("-", "jp-").Attribute("src"),
 		}.Extra("actors", Selects(".box-taglink > li > a[href^=\"/mono/dvd/-/list/=/article=actress/\"]")),
 	}
