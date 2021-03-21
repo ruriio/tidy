@@ -26,7 +26,7 @@ func Fc2(id string) Site {
 			Series:   Select(".items_article_seller").Replace("by ", ""),
 			Release:  Select(".items_article_Releasedate").Replace("販売日 : ", ""),
 			Duration: Select(".items_article_MainitemThumb > p"),
-			Id:       Select(".items_article_TagArea").Attribute("data-id"),
+			Id:       Select(".items_article_priceHistory").Attribute("data-id"),
 			Label:    Select("null"),
 			Genre:    Select("null"),
 			Images:   Select("li[data-img^=\"https://storage\"]").Attribute("data-img"),
