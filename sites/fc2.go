@@ -9,13 +9,13 @@ import (
 
 func Fc2(id string) Site {
 	id = parseFc2Id(id)
-	next := Fc2Club(id)
+	//next := Fc2Club(id)
 
 	return Site{
 		Url:       fmt.Sprintf("https://adult.contents.fc2.com/article/%s/", id),
 		UserAgent: MobileUserAgent,
 		Path:      "fc2/$Actor/FC2-PPV-$Id $Title/",
-		Next:      &next,
+		//Next:      &next,
 
 		Selector: Selector{
 			Title:    Select(".items_article_MainitemNameTitle"),
