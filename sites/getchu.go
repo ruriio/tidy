@@ -33,7 +33,7 @@ func Getchu(id string) Site {
 		Search:    &search,
 
 		Selector: Selector{
-			Title:    Select("meta[property=\"og:title\"]").Attribute("content"),
+			Title:    Select("meta[property=\"og:title\"]").Attribute("content").Replace("/", " "),
 			Actor:    Select("a[href^=\"https://dl.getchu.com/search/dojin_circle_detail.php\"]"),
 			Poster:   Select("meta[property=\"og:image\"]").Attribute("content"),
 			Producer: Select("a[href^=\"https://dl.getchu.com/search/dojin_circle_detail.php\"]"),
