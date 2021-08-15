@@ -3,6 +3,7 @@ package sites
 import (
 	"fmt"
 	. "github.com/ruriio/tidy/selector"
+	"net/http"
 	"regexp"
 	"strings"
 )
@@ -22,6 +23,7 @@ func Dmm(id string) Site {
 		Key:       parseDmmKey(id),
 		Url:       fmt.Sprintf("https://www.dmm.co.jp/mono/dvd/-/detail/=/cid=%s/", dmmId),
 		UserAgent: MobileUserAgent,
+		Cookies:   []http.Cookie{{Name: "age_check_done", Value: "1"}},
 		Path:      "dmm/$Actor/$Id $Title/",
 		Search:    &search,
 		Next:      &next,

@@ -16,7 +16,7 @@ func Jav(id string) Site {
 		Selector: Selector{
 			Title:    Select("h3").Replace(dmmId, ""),
 			Actor:    Select(".star-name"),
-			Poster:   Select(".bigImage").Attribute("href"),
+			Poster:   Select(".bigImage").Attribute("href").Replace("/pics", "https://www.javbus.com/pics"),
 			Producer: Select("a[href^=\"https://www.javbus.com/studio/\"]"),
 			Sample:   Select(".play-btn").Attribute("href"),
 			Series:   Select("a[href^=\"https://www.javbus.com/series\"]"),

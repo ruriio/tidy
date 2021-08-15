@@ -199,7 +199,7 @@ func (site *Site) Body() (io.ReadCloser, error) {
 	//defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		log.Printf("stats code error: %d %s\n", resp.StatusCode, resp.Status)
+		log.Printf("stats code error: %d %s, using search\n", resp.StatusCode, resp.Status)
 		return site.searchAndGet()
 	} else {
 		body := resp.Body
