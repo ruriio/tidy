@@ -53,6 +53,7 @@ func registerSites() map[string]func(string) Site {
 	register(sites, Mgs)
 	register(sites, Ave)
 	register(sites, Tokyo)
+	register(sites, Getchu)
 	return sites
 }
 

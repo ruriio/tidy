@@ -1,6 +1,7 @@
 package util
 
 import (
+	"crypto/tls"
 	"fmt"
 	"io"
 	"log"
@@ -42,7 +43,11 @@ func download(filepath string, url string) {
 		log.Fatal(err)
 	}
 
-	resp, err := http.Get(url)
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+	client := &http.Client{Transport: tr}
+	resp, err := client.Get(url)
 	if resp != nil {
 		defer resp.Body.Close()
 	}
